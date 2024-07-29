@@ -1,0 +1,295 @@
+
+
+the commandments
+
+KITTY COMMANDS
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ctrl shift t - new kitty tab
+ctrl shift left arrow - switch tabs
+ctrl shift +- - change size of text in kitty
+ctrl shift q - close kitty tab
+kitten themes - kitty customization
+
+LINUX COMMANDS
+----------------------------------------------------------------------------------------------------
+firefox --new-tab --url www.google.com
+tail - open a file
+sudo dnf install pkg - install a file
+sudo -i or su or s - power user, type exit to exit power user
+sudo passwd root - set password for root
+sudo dnf remove (program)
+sudo make clean install - install files in your current directory
+setxbmap us - sets keyboard to us language
+setxbmap -print -verbose 10 shows current keyboard settings in detail
+sudo dnf clean dbcache - cleans dnf dbcache
+sudo dnf clean all - cleans entire dnf cache
+dnf list installed - lists all installed packages and dependencies in dnf
+ctrl command F1 F2 F3 - changes the tty terminal
+startx - starts an x11 session into dwm
+tar -ztvf [archive name] - list contents of tar file
+tar -xvzf [archive name] - unzip in current folder
+rpm -qa| grep ffmpeg - gives information on ffmpeg
+
+FILE MANIPULATION
+----------------------------------------------------------------------------------------------------
+
+mv "old name.txt" "new name.txt" - rename a file
+du -sh directory_name - tells size of a directory
+rm *.wfp - removes all files of .wfp file type
+realpath "filename" - gives you the full path of folder
+ls or dir -a - lists hidden files within a folder
+ctrl shift c, v - copy paste
+sudo bash -c "ls -al /root" - list all folders in root
+rm -r (file) - removes a folder and all its files
+mv intro manual/chap1 - moves intro file to ...
+mkdir - makes a file in current folder
+dir - list all files in current directory
+
+SCRIPTING  
+----------------------------------------------------------------------------------------------------  
+
+chmod u+x hello_world.sh - change permissions to execute file with ./
+chmod +rwx hello_world.sh - adds read write execute to file
+#!/usr/sh - makes a script execeutable upon startup  
+
+SYSTEM CONFIG
+---------------------------------------------------------------------------------------------------
+
+neofetch - runs neofetch   
+upower --enumerate - lists laptop power sources
+upower, sensors, pwmconfig - system sensor info
+sudo sensors-detect - lm-sensors settings
+cat /proc/meminfo, free, vmstat, top - programs for checking memory and cpu usage
+loginctl - will show visual driver and other login stuff
+brightnessctl set 10% - set screen brightness
+brightnessctl -l - lists all physical devices with leds
+brightnessctl --device='kbd_backlight' set 3 - sets kbd backlight                                                         
+picom &, picom -b - enables default compositing, autostart as bg process  
+amixer set 'Master' 10% - puts volume to 10%                    
+uname -r - check version of os                                
+echo XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
+sudo shutdown -h +45
+poweroff - shutdown safely   
+btop, top, htop - system monitors
+lspci, glxinfo, lshw - chipset info
+
+sudo fdisk -l - lists all drives on system
+sudo umount -l -f /dev/sdb1 - unmount a disk, -lazy and -forced unmount
+sudo mkfs.vfat, ntfs, ext4 /dev/sdb1 - format disk to vfat, ntfs, ext4
+fdisk dev/sda - gives details on selected disk
+mkdir /media/usb-drive - directory made for mounted usb
+mount /dev/sda1 /media/usb-drive/ - mounts usb to usb-drive directory
+
+----------------------------------------------------------------------------------------------------
+
+NETWORK
+
+nmcli dev status - check status of nw devices
+nmcli radio wifi - check wifi device enabled 
+nmcli radio wifi on - enable wifi device
+sudo nmcli dev wifi list - wifi list
+nmcli con down ssid/uuid - disconnect
+sudo nmcli con show - view save connections
+sudo nmcli --ask dev wifi connect "ssid" - connect to a wifi
+sudo nmcli dev wifi connect network-ssid password - connect with pw
+ping google - check connection
+nmcli con up "ssid" - connect without pw
+
+# netstat -tnlp | grep 2222 = check if the port is open
+# nc 127.0.0.1 2222 = connects to the ipaddress and port 2222
+# ssh localhost -p 2222 = connects to port 2222 via ssh
+# ssh-keygen - generates an ssh key
+# ssh-keygen -t rsa
+# ssh-keygen -f (folder path) - generates an ssh key pair (public and
+# private key) and saves it to a folder of your choice
+
+----------------------------------------------------------------------------------------------------
+
+VIM
+
+:q - quit
+:w - write
+:wq - save and quit
+:x - save and quit if any changes have been made?
+i - to insert new text
+:colorscheme space tab - change vim colorscheme
+wq! w! - force write to files
+/word enter n N - how to find word. enter then n to next 
+----------------------------------------------------------------------------------------------------
+
+IMPORTANT FOLDERS
+
+vim .xinitrc - folder to run programs and environment variables on startup
+~/.inputrc - input preferences set on startup
+/etc/inputrc - for actual settings
+cd .config/ - contains all the config files of your programs
+~/.bashrc - bash settings
+/etc/vimrc - vim config file
+
+----------------------------------------------------------------------------------------------------
+
+DWM commands
+
+option shift enter - launch a terminal
+option enter - rotate windows around
+opt H, opt L - change sizes of windows
+opt D, opt I - horizontal vs portrait
+opt J, opt K - switches active window
+shift opt c - kills active window
+opt T, opt F, opt M - tiled window fullscreen
+in floating mode = opt, rmb - resize a window
+f-----------------------------------------------------------------------------------------------
+
+MANUALS
+
+curl --help 
+curl --help all 
+man pages curl 
+man curl
+tldr curl -curl is an example
+
+----------------------------------------------------------------------------------------
+
+LINUX MONITORING
+
+USE method - utilization, saturation and errors
+
+--------------------------------------------------------------------------------------------------------------------------
+GIT COMMANDS
+
+git status - checks if current branch is uptodate, whether there is anything to commit, push or pull, whether files are staged unstaged or untracked, whether there are files created, modified or deleted
+git branch clean_up
+git checkout clean_up
+git push -f origin dev - push code to dev branch
+git reset --hard HEAD~1 - reset your code
+git clone <link> - download repo to computer
+git branch <branch name> - creates local branch -1 branch is used per developer to work in parallel
+git push -u <remote> <branch-name> - push branch to remote repo
+git branch - view all branches
+git branch -d <branch name> - delete a branch
+
+git checkout <branch name> - switches you into another branch so you can work in it, to switch successfully changes in current branch must be committed or stashed, the branch you want to checkout should be local
+
+git checkout -b <branch name> - create and switch to a new branch
+git add <file> - stages a file to git, red = unstaged, green = staged
+git commit -m "commit message" - saves a stage locally
+git push <remote> <branch-name> - uploads commits to remote repo
+git push --set-upstream <remote> <name-of-your-branch> - to upload a newly created branch to a remote repo
+git push -u origin <branch-name> - pushes a branch to origin
+----------------------------------------------------------------------
+git config 
+
+git config --global user.name "user_name" - change global user name 
+git config --global user.email "user email" - change global user email
+git config --global init.default branch main - configure and name default branch
+git config -h - help for git config - help for config
+get help config - more detailed help on config or anything else
+
+--------------------------------------------------------------------------------
+staging and commiting to git local
+
+clear - gives a fresh view in terminal
+git branch -m main2 - names current branch to main2
+git add Honey.oy - stages file (green) 
+git rm --cached Honey.py - unstages (red) a staged (green) file
+git add -A - add all files in current folder to git 
+git commit -m "commit message" - saves a stage locally 
+git diff -shows difference in file since last commit, original text in red, changed text in green
+
+git restore --staged Honey.py - adds a file back to staging
+git commit -a -m "comment" - stages and commmits a file in one command
+git rm "Honey.py" - removes this file in its folder
+git restore "Honey.py" - can restore a removed files but might not work
+git mv "Honey.py" "penis.py" - will change name of Honey.py
+git log - shows all commits that youve made
+git log --oneline - abbreviated version
+git commit -m "changed commit text" --amend - amends the last commit message
+git log -p - see all the different changes youve made between commits
+git reset <serial number> eg. 99bb5c5 - resets to the commit of serial number found in git log --oneline
+git rebase -i --root - change how your commits or structured with an editor
+git branch - shows your branches 
+git branch FixTemp - creates a new brnach called Fix Temp
+git switch FixTemp - switches to FixTemp branch 
+git merge -m "comment" FixTemp - merge changes made in FixTemp into current branch
+git branch -d FixTemp - deletes FixTemp branch
+git switch -c Yolo - creates a new branch called yolo and switches you into it 
+
+After you have commited a version of Honey.py to 2 separate branches you can see the difference between the 2 comits by switching branches 
+--------------------------------------------------------
+how to create a new repo on github - ste by step
+
+git init
+git branch -m main
+git branch fixtemp
+git add -A
+git branch
+git remote add origin https://github.com/lrad88/restaurant_QR_code_menu.git
+git remote set-url origin https://<token@github.com/<username>/<repo>
+git push -u origin main
+
+---------------------------------------------------------
+merge conflicts
+
+When you try to merge Yolo  with main2 but you have commited changes to main2 since you created yolo you will get a merge conflict wchich will stop you from merging. you will get something like this: 
+
+<<<<<<< HEAD - HEAD is what is in the main branch
+#123 peno
+======= - after this line is what is in the yolo branch 
+#123 pen island
+>>>>>>> Yolo
+
+from here you need to delete eevrything in HEAD and keep whatever you choose in YOLO, then you commit -a -m to end merge conflict
+
+----------------------------------------------------------------------------
+add to github
+
+to add to github it is smart to follow the github instructions laid after creating a repo, specifically at the "push existing repo" area
+
+if you run into error " Support for password authentication was removed on August 13, 2021" follow these instructions:
+- go to github settings / developer settings/ classic token / select all scopes if its for you and unlimited expiry
+- copy token because you wont see it again
+
+
+--------------------------------------------------
+when you need to sync local repo with changes made on remote repo
+
+git fetch - downloads all history from the remote branches of your repo
+git merge - merges the remote repo with the local repo to elimiate conflicts
+git pull - does a fetch and merge both at once
+
+==========================================================================================
+sqlite3 commands
+
+sqlite3 example.db - creates a db inside of the current folder
+
+.tables - lists tables of db
+.quit - quit
+.help - shows more useful commands 
+PRAGMA table_list;
+CREATE TABLE table1(fname text NOT NULL , lname text); - creates a table named table1 with 2 columns named fname and lname and they are text columns, NOT NULL means something needs to be entered into this column or you will get an error
+
+PRAGMA table_info(table_name) - gives column names and other info
+
+INSERT INTO table1 VALUES("john","smith"); - this will insert text values john smith into the fname and lname columns
+
+SELECT * FROM table1; - display all the information in table 1
+SELECT * FROM table1 WHERE fname IS "rick"; - selects all data from table1 where fname is rick
+SELECT * FROM table1 WHERE fname LIKE "rick"; - does the same as above but doesnt care about case sensitivity
+SELECT * FROM table1 WHERE lname LIKE "smith%"; - all lnames that begin with the string smith will appear including smithson, smithington etc, likewise all lnames that end with "%son" eg. smithson gibson etc. 
+SELECT fname from table1; - will show you the whole lname column
+SELECT rowid FROM table1; - shows how many rows in table 1
+SELECT rowid, lname, fname FROM table1 WHERE lname LIKE "smith"; - selects only the rowids that contain "smith" as lname and will display lname|fname as shown
+DELETE FROM table1 WHERE rowid=2; - deletes whatever is in row 2
+INSERT INTO table1 VALUES ('peter', 'thompson'); inserts a new value into table 
+UPDATE table1 SET phone='12253666186' where rowid=5; - set the phon number in PHONE column in row 5
+
+===============================================================================================Jupterlabs
+
+# command + enter in order to execute code
+# esc and B to create a new cell
+# esc and A creates a new cell above a cell
+# M to create a markdown cell for writing headings and such
+# option + enter executes the current cell and creates a new one
+# DD to delete a cell when outside of it only
+# CC and V to copy and paste a cell when outside of it only
+
