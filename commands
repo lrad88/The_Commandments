@@ -261,6 +261,7 @@ if you run into error " Support for password authentication was removed on Augus
 - go to github settings / developer settings/ classic token / select all scopes if its for you and unlimited expiry
 - copy token because you wont see it again
 
+if you change the name of your repo in github you will need a new access token
 
 --------------------------------------------------
 when you need to sync local repo with changes made on remote repo
@@ -296,7 +297,7 @@ INSERT INTO table1 VALUES ('peter', 'thompson'); inserts a new value into table
 UPDATE table1 SET phone='12253666186' where rowid=5; - set the phon number in PHONE column in row 5
 
 ===============================================================================================
-Jupterlabs
+Jupyterlabs
 
 # command + enter in order to execute code
 # esc and B to create a new cell
