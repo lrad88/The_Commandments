@@ -1,0 +1,107 @@
+
+
+
+Packages for a usable Fedora install 
+
+sudo dnf install kitty
+
+vim
+
+libXinerama devel
+
+libXext
+
+libX11
+
+libX11-xcb
+
+xproto
+
+dbus-devel gcc git libconfig-devel libdrm-devel libev-devel libX11-devel libX11-xcb libxcb-devel libGL-devel libEGL-devel libepoxy-devel meson pcre2-devel pixman-devel uthash-devel xcb-util-image-devel xcb-util-renderutil-devel xorg-x11-proto-devel xcb-util-devel
+ 
+
+git clone https://git.suckless.org/dwm
+
+dmenu
+
+st
+
+libXft devel
+
+make gcc
+
+xinit
+
+firefox
+
+sudo yum group install "X window system"
+
+python3
+
+python3 -pip
+
+snapd
+
+sudo dnf snap install pycharm-community --classiic
+
+yum install fuse fuse-devel
+
+brightnessctl
+
+lm_sensors
+
+picom
+
+btop
+
+tldr
+
+pycharm-community tarball
+
+vlc
+
+rpm-fusion repos, sudo dnf groupupdate Multimedia
+
+fzf
+
+python3-tkinter
+
+chromium
+
+fedora-workstation-repositories
+
+pip install webdriver-manager
+
+add the rpm fusion non free repository
+
+sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+add rpm fusion free repository
+
+sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+
+flatpak
+
+enable flathub
+
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+wireshark
+
+htop
+
+sqlite
+
+pip install django
+
+pip install jupyterlab
+
+pip install pandas
+
+pip insatll pillow
+
+sqlitebrowser
+
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+
+liberation-fonts
