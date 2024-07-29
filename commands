@@ -216,16 +216,28 @@ git switch -c Yolo - creates a new branch called yolo and switches you into it
 
 After you have commited a version of Honey.py to 2 separate branches you can see the difference between the 2 comits by switching branches 
 --------------------------------------------------------
-how to create a new repo on github - ste by step
+how to create a new repo on github - step by step
 
 git init
-git branch -m main
-git branch fixtemp
-git add -A
-git branch
+git branch -m main - add 1st  branch and name it
+git branch fixtemp - add a 2nd b ranch
+git add -A, or git add <filename>
+git status
+git commit -m "commit message"
+git branch - view branches
 git remote add origin https://github.com/lrad88/restaurant_QR_code_menu.git
 git remote set-url origin https://<token@github.com/<username>/<repo>
 git push -u origin main
+
+update local repo to github
+
+git add <filename>
+git commit -m "commit message"
+git push -u origin main
+
+unstage a file 
+
+git restore --staged <filename>
 
 ---------------------------------------------------------
 merge conflicts
@@ -283,7 +295,8 @@ DELETE FROM table1 WHERE rowid=2; - deletes whatever is in row 2
 INSERT INTO table1 VALUES ('peter', 'thompson'); inserts a new value into table 
 UPDATE table1 SET phone='12253666186' where rowid=5; - set the phon number in PHONE column in row 5
 
-===============================================================================================Jupterlabs
+===============================================================================================
+Jupterlabs
 
 # command + enter in order to execute code
 # esc and B to create a new cell
@@ -293,3 +306,4 @@ UPDATE table1 SET phone='12253666186' where rowid=5; - set the phon number in PH
 # DD to delete a cell when outside of it only
 # CC and V to copy and paste a cell when outside of it only
 
+token: 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
