@@ -235,9 +235,9 @@ git add <filename>
 git commit -m "commit message"
 git push -u origin main
 
-unstage a file 
 
-git restore --staged <filename>
+git restore --staged <filename> - unstage a file 
+git rm --cached .gitignore - remove a file from git
 
 ---------------------------------------------------------
 merge conflicts
