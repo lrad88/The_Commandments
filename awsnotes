@@ -19,7 +19,7 @@ EC2 - amazon elastic compute cloud - gives you access to amazon server resources
 Multitenancy: sharing underlying hardware between virtual machines
 caas: compute as a service
 
-amazon EC2 instance families: general purpose, compute optimized, memory optimized, accelerated computing, storage optimized, these are system hardware configures
+amazon EC2 instance families: general purpose, compute optimized, memory optimized, accelerated computing, storage optimized, high performance compute optimized. these are system hardware configurations.
 
 EC2 purchase options: on demand by far the most expensive but the most flexible. Reserved instances  offers 1 or 3 year contracts when you commit to an instance family, tenancy and region, reserved instance is a billing discount applied to on demand that limits its capability , spot instance are used for workloads with flexible start and end times and are ok with interruptions like batch processing offers the highest discounts. dedicated hosts are servers fully dedicated to your use only and are the most expensive
 
@@ -30,7 +30,8 @@ scaling out - adding more instances
 
 you can set the minimum, desired or maximum number of instances for your autoscaling group
 
-elastic load balancing - directs traffic to servers in an even way so that each servers load is balanced, runs at the region level, automatically scalable, a single url that the entire front end uses to communicate with the backend, makes backend frontend communication much more simple
+elastic load balancing - directs traffic to servers in an even way so that each servers load is balanced, runs at the region level, automatically scalable, a single url that the entire front end uses to communicate with the backend, makes backend frontend communication much more simple. automatically distributes incoming traffic across multiple targets in one or more availability zones
+
 
 messaging and queing
 =================================================================================
@@ -45,7 +46,7 @@ tightly coupled architrcture is not possible on aws
 =================================================================================
 serverless compute - you cannot see or the access the underying infrastructure or instances that are hosting your app, all management of the system is taken care of for you, serverless compute options include 
 
-aws lambda - is a serverless compute service  where you upload your code to a lambda function which is configured to have a trigger to begin the code. designed to run code under 15 minutes so its for quick processing like web back end or handling requests
+aws lambda - is a serverless compute service  where you upload your code to a lambda function which is configured to have a trigger to begin the code. designed to run code under 15 minutes so its for quick processing like web back end or handling requests, web apps and websites, internet of things, data processing eg. batch, real time, map reduce, ML inference, chatbots, amazon alexa or voice enabled applcations, IT automation and infrastruture management.
 
 container - a  docker container, a package for your code its dependencies and configuration, containers run on top of ec2 instances and run in isolation
 
@@ -55,7 +56,7 @@ kubernetes - enables you to deploy and manage containeized applications at a lar
 
 container orchestration - processes to start stop and monitor containers over multiple ec2 instances.
 
-amazon elastic container service, amazon elastic kubernetes service - these services are container orchestration tools and are run without the use of of conatiner orchestration software, can be run on top of ec2
+amazon elastic container service, amazon elastic kubernetes service - these services are container orchestration tools and are run without the use of of conatiner orchestration software, can be run on top of ec2. 
 
 aws fargate - serversless compute platform for ecs and eks, back end is managed for you
 
@@ -142,11 +143,11 @@ s3 glacier flexible retrieval - retain data for several years for auditing proce
 
 s3 lifecycle policies - allows you to move data automatically between the above tiers for periods of days eg from glacier to standard form 90 days etc.
 
-s3 glacier instant retrieval - for archived data that needs immediate access 
+s3 glacier instant retrieval - for archived data that needs immediate access, but is rarely accessed. 
 
 s3 one zone infrequent access - stores data on a single availability zone, lower storage price than s3 standard ia, which uses 3 zones. is less safe and shouldnt be used for valuable un replicable data.
 
-s3 deep archive - able to retrieve objects within 12-48 hours, lowest cost storage class ideal for archiving 
+s3 deep archive - able to retrieve objects within 12-48 hours, lowest cost storage class ideal for archiving, designed to store data for 7 to 10 years, can only be accessed once or twice a year.  
 
 s3 outposts - creates s3 buckets on amazon s3 outposts. delivers object storage to your on premises aws outpost 
 
@@ -154,16 +155,46 @@ s3 intelligent tiering - for data with changing access patterns, requires a smal
 
 elastic file system EFS - is a linux file system, can be accessed from anywhere in the region, data storage automatically is scaled up in size when used without disrupting applications. is a form of file storage compared to block storage. Ideal for cases where a large number of services and resources need access to the same data at the same time
   
+Amazon fsx - fully managed service, choose between 4 widely used file systems: NetApp ONTAP, OpenZFS, Window File Server and Lustre
+
 ---------------------------------------------------------------------------------
 
+Ledger database: for systems of record, supply chain , registration, banking transactions use amazon ledger database service QLDB
+
+Time series database:
+
+used for internet of things applications, devops, industrial telemetry use amazon timestream
+
+Graph database: 
+
+used for fraud detection, social networking, recommendation engines use amazon neptune
+
+Wide column database: 
+
+for high scale industrial apps for equipment maintenance, fleet management, and route optimization use amazon keyspaces, good for apache cassandra workloads.
+
+Document database:
+
+for content management, catalogs and user profiles use Amazon document DB wit mongoDB compatibility, for JSON workloads 
+
+In memory database:
+
+for caching, session management, gaming leaderboards, geospatial applciations use Amazon elasticache, Amazon memory DB for Redis
+
+Key Value database:
+
+for high traffic webb applictions, e-commerce systems, gaming applications use Amazon Dynamo DB.
+
 relational databases: 
+
+used in traditional applications, including enterprise resource planning ERP, customer relationship management CRM and e-commerce. AWS service of use in this case include amazon aurora, RDS, Redshift. Amazon rds is compatible with multiple engines, can be launched in multiple AZ configuration to be deployed for high availability HA.
 
 use SQL to store query data, amazon rds service enables relational databases to be run in the cloud. amazon rds provisions hardware, db setup, patching and backups.
 as well as customer ownership of schema and ownership of data
 
 amazon rds supported db engines: amazon aurora, postgre sql, mysql, mariaDB, oracle, microsoft sql server 
 
-amazon aurora - compatible with mysql and postgre sql and is 5 times faster than standard mysql dbs. amazon aurora is an enterprise class relational database.replicates 6 copies of your data to 3 data centers and continuosly baks up to amazon s3 
+amazon aurora - compatible with mysql and postgre sql and is 5 times faster than standard mysql dbs. amazon aurora is an enterprise class relational database.replicates 6 copies of your data to 3 data centers and continuosly baks up to amazon s3, performs at 1/10th cost of regulat dbs. 
 
 non relational database:
 
@@ -173,7 +204,7 @@ data warehouses:
 
 looks at data for historical analytics as opposed to operational analysis. historical data is data that is set in the past and wont be changed like the sale figuresfor 2nd july 2023 as opposed to "how many bags of coffee do i have left right now ?" after so many sales.
 
-amazon redshift -  allows you run a single query across exabytes of unstrctured historical data  at a rate up to 10 times higher than traditional sql dbs
+amazon redshift -  allows you run a single query across exabytes of unstrctured historical data  at a rate up to 10 times higher than traditional sql dbs, columnar storage, can run online analytical processing workload OLAP.
 
 amazon database migration service (adms) - allows source database to remain fully operational during migration. the source and target dbs dont have to be the same type. homogenous migrations are migrations between dbs of the same type eg oracle, sql, heterogenous migrations are db migrations between dbs of different type that have diffeerent schema structures, data types, and db code. this data 1st needs to be converted with aws schema conversion tool which converts all data so that it can fit with the schema of the new db. is useful also for dev and test db migrationwhich is the copying of db data to a new db for testing purposes so that the original db can still be used for its original purpose, db consolidation where you have multiple dbs and want to consolidate them into a single db, and continuous db replication which is making multiple copies of the same db 
 
@@ -230,7 +261,7 @@ slowloris attack - attacker pretends to have a terribly slow connection and very
 
 A solution to the slowloris attack would be the Elastic load balancer which is a middle man to the front end of the system this stops the attack from reaching the front end, it is scalable and runs at the region level so it can withstand a large bruteforce attack
 
-AWS shield with AWS web application firewall WAF - WAF  monitors network requests for web applications, filters incoming web traffic for the signatures of bad actors using a web access control list WACL, has machine learning capaibilities and recognizes new threats as they evolve. AWS WAF also utilizes other AWS tools like elastic load balancer, route 53 and AWS WAF and cloud front to achieve this, also comes with detailed diagnostic tools and the ability to write your own custom rules to mitigate attacks. AWS shield protects aplications against ddos. 
+AWS shield with AWS web application firewall WAF - WAF  monitors network requests for web applications, filters incoming web traffic for the signatures of bad actors using a web access control list WACL, has machine learning capabibilities and recognizes new threats as they evolve. AWS WAF also utilizes other AWS tools like elastic load balancer, route 53 and AWS WAF and cloud front to achieve this, also comes with detailed diagnostic tools and the ability to write your own custom rules to mitigate attacks. AWS shield protects aplications against ddos. 
 
 AWS key management service - encryption - securing a message or data in a way that only authorized parties can access it through cryptographic keys. there are 2 types of encryption: encryption at rest which is encryption for stored data like in dynamo DB, keys used to encrypt your data are generated and managed in AWS KMS, this is where you can also disable keys and manage acccounts that have access to keys. the 2nd type is encryption in transit, which utilizes secure socket layer ssl, and service certificates to validate and authorize clients.
 
@@ -247,7 +278,9 @@ Amazon cloudwatch - enables you to monitor and manage various metrics and and co
 Amazon cloudtrail - records API calls for your account, recorded information includes api caller identity, time of call, source ip address of caller. this is a log that records the who, how, when, where of an api caller, everything except the why?. recall that api calls are used to do everything in aws including provisioning, managing and configuring your aws resources. cloud trail allows you to review a complete history of this activity, updated within 15 minutes of api call being made.cloud trail insights is an optional feature that can automatically detect unusual api activities in your account, for example insights might detect that a higher number of ec2 instances have been launched than what is normal and it will alert you
 
 
-AWS trusted advisor - inspects your aws environment and provides real time recommendations according to aws best practices across 5 categories: cost, optimization , performance: eg. provides recommendations for how to take advantage of provisioned throughput, security, fault tolerance and service limits. It will do this by issuing green, orange and red checks across these 5 categories, green means no problem detected, orange means that some investigations are recommended and a red circle means actions need to be performed immediately to illeviate poor performance, functionality or efficiency in any of the categories, can for example review security of your amazon s3 buckets by checking for open access permission 
+AWS trusted advisor - inspects your aws environment and provides real time recommendations according to aws best practices across 5 categories: cost, optimization , performance: eg. provides recommendations for how to take advantage of provisioned throughput, security, fault tolerance and service limits. It will do this by issuing green, orange and red checks across these 5 categories, green means no problem detected, orange means that some investigations are recommended and a red circle means actions need to be performed immediately to illeviate poor performance, functionality or efficiency in any of the categories, can for example review security of your amazon s3 buckets by checking for open access permissions
+
+trusted advisor can help save costs by identifying RDS DB instances, underutilized EBS volumes, unassociated elastic IP addresses and excessivr timeouts in Lambda functions. it can help performance by analyzing EBS throughput and latency, EC2 compute usage and cloudfront configurations. it can improve security by identifying RDS securoty group access risk, exposed access keys, and unneccessary s3 bucket permissions. it can improve fault tolerance by examining auto scaling ec2 groups, delted healt checks on route 53, disabled availability zones and disabled rds backups. it will also notify when you have reached 80% of your service quota 
 
 
 Amazon costs
@@ -258,6 +291,12 @@ EC2 instance savings plans - reduces compute costs by committing to a consistent
 AWS free tier - enables you to begin certain services without incurring costs for a specified period, three types of free tier offers are available including always free, 12 months free and trials, 12 months free is only available to new amazon account holders.
 
 AWS pricing - there are 3 categories, pay for what you use where you pay only for the resources that you use without requiring long term contracts and licensing. pay less when you reserve which allows you to save up to 72 % on costs compared to on demand by reserving resources for a contracted period of 1 or 3 years and volume based discounts which based on the volume of usage will incur higher and higher discounts for example with s3 storage which decreases in cost when you reach a higher tier of usage.
+
+on demand instances - charges per hour/second, short term, unpredictable workloads
+
+reserved instances/savings plans - discount for 1 to 3 year commitments. standard reserved instance allows modification of availability zone, scope network type and instance size with the same instance type. Convertible reserved instance allows exchange of one or more convertible reserved instances with a different config including instance family, OS and tenency. there are no limits to how often an exchange can be performed as long as the target convertible reserved instance is of equal or greater value than the previous.
+
+spot instances - for applications with flexible start and end times, urgent computing needs for large capacity, up to 90% discount.
 
 AWS pricing calculator - explore aws services and create estimates for the cost of your use cases and cost centres. plan your system and resources then calculate how much this systen will cost 
 
@@ -284,6 +323,7 @@ technical account manager TAM: enterprise on ramp and and entprise support plans
 
 aws marketplace: a digital catalog contaning thousands of software listings from independent vendors where you can find, test and buy software that runs on AWS, you can explre software solutions by industry and use case like the healthcare industry where you can buy software to help with protecting patient records or a machine learrning software to analyze patients medicval history and predict possible risks. marketplace has several categories including infrastructure software, devops , data products, professional services, business applications, machine learning , industries, internet of things, and within each are sub categories that further drill down to exactly what you would need in each field.
 
+amazon free tier: visit https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=tier%23always-free&awsf.Free%20Tier%20Categories=*all, free options include always free, free trials and 1 year free.
 
 Migration and innovation in AWS cloud
 ================================================================================= 
@@ -376,4 +416,55 @@ Stop spending money running and maintaining data centers: Cloud computing in dat
 Go global in minutes: The AWS Cloud global footprint enables you to quickly deploy applications to customers around the world, while providing them with low latency.
 
 =======================================================================================
-Exam domains: cloud concepts, security compliance , technology, billing and pricing 
+Exam domains: cloud concepts, security compliance , technology, billing and pricing
+
+=================================================================================
+
+General IT department job roles - 
+
+IT solutions architect - develop the services and solutions, design and manage communications, security, networking and storage. this rols will typically move into the AWS cloud architect role
+
+system admin - keeps servers operational, ensure server uptime goals, patch and upgrade operating systems, hardware, hypervisors, system backups. this job is lost with the implementation of AWS. New AWS roles to consider are either security admin or system operations professional
+
+network admin - administer network access points, personnel access security, configurations and VPNs. same rolse in AWS as above.
+
+Desktop admin - installs and maintains applications on desktop and laptops and work with NW admin for network and security configurations.  Same roles in AWS as above
+
+Applications admin - handles web and customer applications, works with system admin to host and maintain applications on servers, also work with NW admin for application access control. Same roles in AWS as above 
+
+database admin - work with system admin on servers that the database is on. work with NW admin for database control. AWS role would be Devops 
+
+
+Job roles in the cloud -
+
+Cloud architect  - AWS cloud subject matter expert,  builds the cloud architecture blueprint to deliver highly available, cost efficient and scalable cloud environments. supervises deployment in the cloud environment, application atchitecture for all aspets of the cloud. should understand how services are connected and how to integrate them, understands cloudwatch logging, identity access management and cloud security. recommended learning for this role is cloud essentials learning plan and solutions architect learning plan, certifications include AWS Cloud Practitioner Foundational, AWS Solutions Architect Associate, AWS Solutions Architect Professional
+
+System admin - responsible for overall performance of cloud systems, manages configurations and changes, assists with setting up and accessing database servers in the cloud, deploys, configures and monitors cloud solutions, Proficient with hands-on tasks and detailed configuration changes, Understands configuration management, Proficient with requirement gathering and translating to deployments, Recommended Learning Plans are available here: Cloud Essentials Learning Plan, Systems Operator Learning Plan. Additional certifications you can consider:AWS Cloud Practitioner Foundational, AWS Solutions Architect Associate, AWS SysOps Administrator Associate, AWS Advanced Networking Specialty
+
+security admin - responsible for protection of data and resources in the cloud, must hava a reactive mindset to investigate security incidents and a proactive one to plug holes in security. Defines security requirements for enterprise-level businesses based on their security and regulatory requirements, Understands security rules and requirements, Communicates security rules down to engineers and up to decision makers to understand and address security risks, Resourceful because it is not possible to memorize all regulatory requirements, Researches and is resourceful with contacts to determine an answer to address security. Recommended Learning Plans are available here: Cloud Essentials Learning Plan, Security Learning Plan. Additional certifications you can consider: AWS Solutions Architect Associate, AWS Security Administration
+
+devops admin - oversees database and developer teams, optmizes use of aws cloud, helps cloud operations run at larger faster scale. Applies programming scripting languages with proficiency, Understands and applies QA and testing, Understands operations and manages developers, Orchestrates the many tools and stages in the pipeline with a model of small rapid releases that can each be tested and improved ongoing, manages release cycle into the pipeline, rollback changes incase something doesnt work, Recommended Learning Plans are available here: Cloud Essentials Learning Plan, DevOps Engineer Learning Plan. Additional certifications you can consider: AWS Cloud Practitioner Foundational, AWS Solutions Architect Associate, AWS Developer Associate, AWS DevOps Engineer Professional, AWS Database Specialty
+
+==================================================================================AWS billing and cost management
+
+you can reach these tools in the AWS billing dashboard by typing "billing" in the search
+
+tools to establish visibility:
+
+AWS cost explorer - visualise, understand and manage your aws costs over time. where you can view costs up to 12 months in the past and filter by service. there is a costy explrere api.
+AWS cost and usage reports - achieve visibility into your aws spend
+
+tools to prevent overspend:
+
+AWS budgets - improve planning and cost control with flexible budgeting and forecasting
+
+AWS cost anomaly detection - reduce cost surprises with machine learning
+
+Billing console: resources to manage ongoin payments and generate reports 
+Cost management console: resources to optimize future costs
+
+unblended costs: Unblended costs represent your usage costs on the day they are charged to you. In finance terms, they represent your costs on a cash basis of accounting. default option for showing costs
+
+Amortized costs:able to show daily cost breakdowns of everything, even your monthly charges which would be broken down on a dailyh basis it’s useful to view costs on an accrual basis rather than a cash basis. This cost dataset is especially useful for those of you who have purchased AWS Reservations such as Amazon EC2 Reserved Instances. Savings Plans and Reservations often have upfront or recurring monthly fees associated with them.
+
+blended costs: Blended costs are calculated by multiplying each account’s service usage against something called a blended rate. A blended rate is the average rate of on-demand usage, as well as Savings Plans- and reservation-related usage, that is consumed by member accounts in an organization for a particular service.
