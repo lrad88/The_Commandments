@@ -1,12 +1,12 @@
 cloud computing : on demand delivery of IT resources and apps through the internet with PAYG pricing
 
-the 3 cloud computing deplyoment models: cloud absed, on premises and hybrid
+the 3 cloud computing deplyoment models: cloud based, on premises and hybrid
 
 - cloud based: run all parts of the app on the cloud, existing appps get put on the cloud, new apps get put on cloud
 
-- on premisees: aka private cloud deployment, applications that run on a data center on premises but incoporate application management and virtualization technologies which increase resource utilization
+- on premises: aka private cloud deployment, applications that run on a data center on premises but incoporate application management and virtualization technologies which increase resource utilization
 
-- hybrid: cloud based resources connected to on premises infrastructure, and legacy IT applications
+- hybrid: cloud based resources connected to on premises infrastructure, and legacy IT applications. A good use case is to replicate on site system architecture in the cloud for testing before deployment on local infrastructure.
 
 benefits of cloud computing:
 
@@ -65,11 +65,15 @@ Suppose that a company’s application developer has an environment on their com
 AWS global insfratructure:
 =================================================================================
 
-aws regions - aws builds data centers all over the world close to places of high demand all interconnected on a high speed fiber network, customers get to choose which region they run their operation from and it can either explicitly be kept in that one region or be exported to another with right security credentials, this is important for security of information where certain data isnt allowed to leave a country. 4 factors are involved in selecting region: compliance with the law, proximity, feature availability (different regions have different features), pricing (different regions equal different pricing)
+aws regions - eg. us-east, aws builds data centers all over the world close to places of high demand all interconnected on a high speed fiber network, customers get to choose which region they run their operation from and it can either explicitly be kept in that one region or be exported to another with right security credentials, this is important for security of information where certain data isnt allowed to leave a country. if youre not asked to specify an individual availability zone upon deployment this indicates that the service operates on a region-scoped level, in this case aws automatically performs actions to increase data durability and availability on the other hand if you are asked to specify an availiability zone then these tasks fall to you, this involves making sure your workload is replicated across multiple availability zones, you should use 2 availability zones at a minimum which will at least make your data redundant incase an availability zone fails  
 
-availability zone: a fully isolated portion of the aws infrastructure, one single region can contain many data centers or availability zones which helps with disaster proofing and threat management, most applications run across at least 2 availability zones
+4 factors are involved in selecting region: 
 
-edge locations - run amazon cloud front, and amazon route 53 which a dynamic name service or dns 
+compliance with the law which requires you to handle your data in a certain way for example sensitive data cannot leave the boundaries of the united kingdom, proximity or latency is an important consideration if you are  building high speed applications like stock monitoring, feature availability (different regions have different features AWS services available to them), pricing (different regions equal different pricing)
+
+availability zone: eg. us-east-1a, the "1a or 1b" is the availability zone. data centers are located in availability zones which are located in regions, brazil is a region for example.  fully isolated portion of the aws infrastructure, one single region can contain many data centers or availability zones which helps with disaster proofing and threat management, most applications run across at least 2 availability zones
+
+edge locations - or edge caches run amazon cloud front, and amazon route 53 which a dynamic name service or dns. used to cache constent closer to end users, thus reducing latency 
 
 amazon cloud front - a content delivery network or cdn that uses edge locations which are separate from regions. regions can send data to edge locations to make it geographically closer for people to access reducing trasnfer times of data
 
@@ -79,13 +83,13 @@ aws outposts - extend aws infrstructure and services to different locations can 
 interacting with AWS
 =================================================================================
 
-API - application programming interface are used to interact with AWS services  through AWS management console, AWS command line interface, AWS software development kits, AWS cloud formation to create requests to send to aws apis to create and manage aws resources 
+API - Every action you make in AWS is an API call thats authenticated and authorized. application programming interface are used to interact with AWS services either through AWS management console, AWS command line interface, AWS software development kits, AWS cloud formation to create requests to send to aws apis to create and manage aws resources 
 
-AWS management console - browser based system, easy to understand and increase knowledge of aws services, useful for building test environments, aws billing, monitoring resources, slow way of doing things because you need to manually design each instance with a browser.
+AWS management console - browser based system typically used by noobs, easy to understand and increase knowledge of aws services, useful for building test environments, aws billing, monitoring resources, slow way of doing things because you need to manually design each instance with a browser.
 
-AWS CLI - allows you to script api calls instead of manually doing it on a browser, you can program them to run on a trigger or at a certain time and it limits errors from manual manipulation.
+AWS CLI - allows you to script api calls instead of manually doing it on a browser, you can program them to run on a trigger or at a certain time and it limits errors from manual manipulation. can be accessed either by downloading the CLI to your computer or through the AWS console.
 
-AWS software development kits - interact with aws resources through various programming languages
+AWS software development kits SDK - interact with aws resources through various programming languages eg. python , nodejs, ruby etc. Useful when you want to integrate your application source code with AWS services. For example, consider an application with a frontend that runs in Python. Every time the application receives a photo, it uploads the file to a storage service. This action can be achieved in the source code by using the AWS SDK for Python (Boto3). Here is an example of code that you can implement to work with AWS resources using the SDK for Python.
 
 aws elastic beanstalk: a service thats takes your application code and configurations and builds your regional environment for you, this setup can be saved on beanstalk and redeployed with ease. focuses on application over infrastrucutre
 
@@ -228,12 +232,39 @@ Amazon dynamo db accelerator - caching performance options for dynamo db
 Security
 ==================================================================================
 
+AWS shared responsibility model - customer has responsibility inside the cloud eg. identity and access management, os network and firewall config, data encryption, and network traffic protection eg. encryption and scheduled backups also Choosing a Region for AWS resources in accordance with data sovereignty regulations. AWS has responsibility for the cloud infrastrucure security susch the hardware, storage, regions, edge locations, the virtualization layer and so on. aws can provide domcumentation for security compliance with a variety of computer security standards and regulations. your operations team is 100% reponsible for patching vulnerabilities, amazon can notifiy you of important patches but will not be the ones who configure your system.
 
-AWS shared responsibility model - customer has responsibility inside the cloud eg. identity and access management, os network and firewall config, data encryption, and network traffic protection. AWS has responsibility for the cloud infrastrucure security susch the hardware, storage, regions, edge locations, the virtualization layer and so on. aws can provide domcumentation for security compliance with a variety of computer security standards and regulations. your operations team is 100% reponsible for patching vulnerabilities, amazon can notifiy you of important patches but will not be the ones who configure your system.
+types of MFA multi factor authentication - 
 
-user permissions and access - aws account owner is also the root user who has supreme access of everything. A user should be created immediately to perform most tasks. Only access root user for a limited number of tasks like changing root user email and changing aws support plan.
+Virtual MFA: A software app that runs on a phone or other device that provides a one-time passcode. These applications can run on unsecured mobile devices, and because of that, they might not provide the same level of security as hardware or FIDO security keys. supported devices include: Twilio Authy Authenticator, Duo Mobile, LastPass Authenticator, Microsoft Authenticator, Google Authenticator, Symantec VIP
 
-aws id and access management - where you create IAM users and give them permissions. all actions are denied by default and need to be explicitly given access to each user, called the principle of least privilege. IAM policy is described in a JSONfile. IAM groups allow to distribute the same priviliges to a large number of people and each group can have different permissions. roles give a different set of permissions to a user based on the tasks that are performed on that day or the job role they have, used for temporary tasks, sheds previous permissions for the role permissions, is good for employees who rotate through different tasks each day. IAM also handles multi factor authentication. Every user should be given an individual account and accounts should not be shared this increases security
+Hardware TOTP token: A hardware device, generally a key fob or display card device, that generates a one-time, six-digit numeric code based on the time-based one-time password (TOTP) algorithm. suppported devices include: Key fob, display card
+
+FIDO security keys: FIDO-certified hardware security keys are provided by third-party providers such as Yubico. You can plug your FIDO security key into a USB port on your computer and enable it using the instructions that follow. supported devices are any FIDO certified products
+
+user permissions and access - aws account owner is also the root user who has supreme access of everything. A user should be created immediately to perform most tasks. Only access root user for a limited number of tasks like changing root user email and changing aws support plan. for example a bad actor can steal your root user permissions and transform your account into a crypto miner. Multi factor auth should be enabled to mitigate this possibility. 
+
+aws id and access management - where you create IAM users and give them permissions. all actions are denied by default and need to be explicitly given access to each user, called the principle of least privilege. IAM policy is described in a JSONfile. IAM groups allow to distribute the same priviliges to a large number of people and each group can have different permissions. roles give a different set of permissions to a user based on the tasks that are performed on that day or the job role they have, used for temporary tasks, sheds previous permissions for the role permissions, is good for employees who rotate through different tasks each day, role priviliges usuallu expire within a time period of 15 minutes to 36 hours. IAM also handles multi factor authentication. Every user should be given an individual account and accounts should not be shared this increases security types of MFA multi factor authentication. IDP or identity providers is a way to manage employee identity information on a large scale eg. 300 + employees. IDP services in AWS include IAM identity center or 3rd party identity providers which stops you from creating separate IAM users for each user in AWS instead you can asswign an IAM role to provide permission to identities that are federated from your idp.
+
+Federated: a process that allows for the transfer of identity and authentication information across a set of networked systems.   
+
+Virtual MFA: A software app that runs on a phone or other device that provides a one-time passcode. These applications can run on unsecured mobile devices, and because of that, they might not provide the same level of security as hardware or FIDO security keys. supported devices include: Twilio Authy Authenticator, Duo Mobile, LastPass Authenticator, Microsoft Authenticator, Google Authenticator, Symantec VIP
+
+Hardware TOTP token: A hardware device, generally a key fob or display card device, that generates a one-time, six-digit numeric code based on the time-based one-time password (TOTP) algorithm. suppported devices include: Key fob, display card
+
+FIDO security keys: FIDO-certified hardware security keys are provided by third-party providers such as Yubico. You can plug your FIDO security key into a USB port on your computer and enable it using the instructions that follow. supported devices are any FIDO certified producttypes of MFA multi factor authentication - 
+
+Virtual MFA: A software app that runs on a phone or other device that provides a one-time passcode. These applications can run on unsecured mobile devices, and because of that, they might not provide the same level of security as hardware or FIDO security keys. supported devices include: Twilio Authy Authenticator, Duo Mobile, LastPass Authenticator, Microsoft Authenticator, Google Authenticator, Symantec VIP
+
+Hardware TOTP token: A hardware device, generally a key fob or display card device, that generates a one-time, six-digit numeric code based on the time-based one-time password (TOTP) algorithm. suppported devices include: Key fob, display card
+
+FIDO security keys: FIDO-certified hardware security keys are provided by third-party providers such as Yubico. You can plug your FIDO security key into a USB port on your computer and enable it using the instructions that follow. supported devices are any FIDO certified producttypes of MFA multi factor authentication - 
+
+Virtual MFA: A software app that runs on a phone or other device that provides a one-time passcode. These applications can run on unsecured mobile devices, and because of that, they might not provide the same level of security as hardware or FIDO security keys. supported devices include: Twilio Authy Authenticator, Duo Mobile, LastPass Authenticator, Microsoft Authenticator, Google Authenticator, Symantec VIP
+
+Hardware TOTP token: A hardware device, generally a key fob or display card device, that generates a one-time, six-digit numeric code based on the time-based one-time password (TOTP) algorithm. suppported devices include: Key fob, display card
+
+FIDO security keys: FIDO-certified hardware security keys are provided by third-party providers such as Yubico. You can plug your FIDO security key into a USB port on your computer and enable it using the instructions that follow. supported devices are any FIDO certified products
   
 aws organizations - a central location to manage multiple aws accounts, manage billing of all accounts, where you groups accounts into organizational units, where you give accounts access to aws services and api actions. service control policies or scp's specifiy maximum permissions for member accounts in the organization, this service sits above IAM. aws organizations is the root of all your aws accounts.
 
@@ -445,20 +476,23 @@ security admin - responsible for protection of data and resources in the cloud, 
 
 devops admin - oversees database and developer teams, optmizes use of aws cloud, helps cloud operations run at larger faster scale. Applies programming scripting languages with proficiency, Understands and applies QA and testing, Understands operations and manages developers, Orchestrates the many tools and stages in the pipeline with a model of small rapid releases that can each be tested and improved ongoing, manages release cycle into the pipeline, rollback changes incase something doesnt work, Recommended Learning Plans are available here: Cloud Essentials Learning Plan, DevOps Engineer Learning Plan. Additional certifications you can consider: AWS Cloud Practitioner Foundational, AWS Solutions Architect Associate, AWS Developer Associate, AWS DevOps Engineer Professional, AWS Database Specialty
 
-==================================================================================AWS billing and cost management
+===============================================================================================================================
+
+AWS billing and cost management
 
 you can reach these tools in the AWS billing dashboard by typing "billing" in the search
 
 tools to establish visibility:
 
-AWS cost explorer - visualise, understand and manage your aws costs over time. where you can view costs up to 12 months in the past and filter by service. there is a costy explrere api.
-AWS cost and usage reports - achieve visibility into your aws spend
+AWS cost explorer - visualise, understand and manage your aws costs over time. where you can view costs up to 12 months in the past and filter by service, for example you can isolate charges by AWS region or service, there is a cost explorer api. Used to visualize charges charts directly in the AWS management console.
+ 
+AWS cost and usage reports - achieve visibility into your aws spend, track your usage and provide estimated charges for the account based around individual aws products, these reports can be further analyzed using amazon Athena and Amazon quicksight
 
 tools to prevent overspend:
 
-AWS budgets - improve planning and cost control with flexible budgeting and forecasting
+AWS budgets - improve planning and cost control with flexible budgeting and forecasting. A cost management feature used to track and manage aws costs. create a budget that stops you from over spending. track costs based on filters for AWS services, member accounts, regions, tags etc. create alerts for your budget that send emails or restrict your account usage, geneerate reports on a daily basis or any timeline, there is an option for a zero spend budget haha. After creating a budget the cost exploreer graph will appear aftewr 24 hours, updates 3 times a day
 
-AWS cost anomaly detection - reduce cost surprises with machine learning
+AWS cost anomaly detection - reduce cost surprises with machine learning, found in billing and payments
 
 Billing console: resources to manage ongoin payments and generate reports 
 Cost management console: resources to optimize future costs
@@ -468,3 +502,6 @@ unblended costs: Unblended costs represent your usage costs on the day they are 
 Amortized costs:able to show daily cost breakdowns of everything, even your monthly charges which would be broken down on a dailyh basis it’s useful to view costs on an accrual basis rather than a cash basis. This cost dataset is especially useful for those of you who have purchased AWS Reservations such as Amazon EC2 Reserved Instances. Savings Plans and Reservations often have upfront or recurring monthly fees associated with them.
 
 blended costs: Blended costs are calculated by multiplying each account’s service usage against something called a blended rate. A blended rate is the average rate of on-demand usage, as well as Savings Plans- and reservation-related usage, that is consumed by member accounts in an organization for a particular service.
+
+
+
