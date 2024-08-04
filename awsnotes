@@ -14,14 +14,37 @@ upfront infrastructure expense vs variable expenses that can be adjusted based o
 
 =================================================================================
 
-EC2 - amazon elastic compute cloud - gives you access to amazon server resources, and control of server configuration, operates on windows or linux, is a virtual machine called hypervisor where you can install your apps and datbases. ec2 allows you to change how much ram, HDD space, graphics, and cpu processing is needed at the click of a button, thisis also where you configure your network traffic
+EC2 - amazon elastic compute cloud - gives you access to amazon server resources, and control of server configuration, operates on windows or linux, runs this virtual machine on top of hypervisor where you can install your apps and databases. ec2 allows you to change how much ram, HDD space, graphics, and cpu processing is needed at the click of a button, thisis also where you configure your network traffic. Multiple ec2 instances can be launched at once and represent a vm with control of hardware resources. generally at the t2.micro instance it would cost 0.0116 USD per hour on general Linux, different OS greatly fluctuate costs
+
+EC2 instance types -  Instance types consist of a prefix identifying the type of workloads they’re optimized for or instance family, followed by a size. For example, the instance type c5n.xlarge can be broken down as follows:
+
+First position – The first position, c, indicates the instance family. This indicates that this instance belongs to the compute optimized family.
+
+Second position – The second position, 5, indicates the generation of the instance. This instance belongs to the fifth generation of instances.
+
+Remaining letters before the period – In this case, n indicates additional attributes, such as local NVMe storage.
+
+After the period – After the period, xlarge indicates the instance size. In this example, it's xlarge.
+
+amazon EC2 instance families: general purpose, compute optimized, memory optimized, accelerated computing, storage optimized, high performance compute optimized. these are system hardware configurations.
+
+AMI - When launching an EC2 instance you first must configure the operating system you want using an Amazon Machine Image. When you launch a new instance, AWS allocates a virtual machine that runs on a hypervisor. Then the AMI that you selected is copied to the root device volume, which contains the image that is used to boot the volume. In the end, you get a server that you can connect to and install packages and additional software on. AMIs are reusable presets for OS, programs and configurations on the VM and can be copied to multiple EC2 vms. AMIS can be found in quickstart AMIs in the AWS marketplace, AWSc communities and your own custom AMIs. 
+
+Each AMI in the AWS Management Console has an AMI ID, which is prefixed by ami-, followed by a random hash of numbers and letters. The IDs are unique to each AWS Region.
 
 Multitenancy: sharing underlying hardware between virtual machines
 caas: compute as a service
 
-amazon EC2 instance families: general purpose, compute optimized, memory optimized, accelerated computing, storage optimized, high performance compute optimized. these are system hardware configurations.
-
 EC2 purchase options: on demand by far the most expensive but the most flexible. Reserved instances  offers 1 or 3 year contracts when you commit to an instance family, tenancy and region, reserved instance is a billing discount applied to on demand that limits its capability , spot instance are used for workloads with flexible start and end times and are ok with interruptions like batch processing offers the highest discounts. dedicated hosts are servers fully dedicated to your use only and are the most expensive
+
+EC2 when do you get charged - When launching an instane it enters a pending state which you are not charged for. When it starts running is when you get charged. When rebooting an instance is the same as rebooting your os he instance keeps its public DNS name (IPv4) and private and public IPv4 addresses. An IPv6 address (if applicable) remains on the same host computer and maintains its public and private IP address, in addition to any data on its instance store volumes. Lastly when you stop your instance or are stopping you are still being charged, only works when you have an EBS physical volume as the root, retains IP addresses. same with stop hibernate which saves the state for faster boot next time.
+
+costs stop being incurred when an instance is shutdown or terminated
+
+Terminating an instance: this will erase the instance nd you will lose all config including Ip addresses.
+
+ec2 locations- unless speccified, when you launch ec2 instances they are in a default vpc. the
+default vpc is public and accessible by the internet so dont place any customer data or private information. this should replaced with a custom vpc when you know how to configure it
 
 amazon ec2 auto scaling - allows for server resources to auto scale based on your companies needs, based on dynamic or predictive scaling or both
 
@@ -44,28 +67,56 @@ simple qeue service: send store and recieve messages between software components
 
 tightly coupled architrcture is not possible on aws
 =================================================================================
-serverless compute - you cannot see or the access the underying infrastructure or instances that are hosting your app, all management of the system is taken care of for you, serverless compute options include 
+serverless compute - you cannot see or access the underying infrastructure or instances that are hosting your app, all management of the system is taken care of for you, serverless compute options include 
 
-aws lambda - is a serverless compute service  where you upload your code to a lambda function which is configured to have a trigger to begin the code. designed to run code under 15 minutes so its for quick processing like web back end or handling requests, web apps and websites, internet of things, data processing eg. batch, real time, map reduce, ML inference, chatbots, amazon alexa or voice enabled applcations, IT automation and infrastruture management.
+aws lambda - is a serverless compute service  where you upload your code to a lambda function which is configured to have a trigger to begin the code. designed to run code under 15 minutes so its for quick processing like web back end or handling requests, web apps and websites, internet of things, data processing eg. batch, real time, map reduce, ML inference, chatbots, amazon alexa or voice enabled applcations, IT automation and infrastruture management. Lambda function can be configured using Lambda api, cloud formation, aws serverless application model SAM.
 
-container - a  docker container, a package for your code its dependencies and configuration, containers run on top of ec2 instances and run in isolation
+An event is a JSON-formatted document that contains data for a Lambda function to process. The runtime converts the event to an object and passes it to your function code. When you invoke a function, you determine the structure and contents of the event.i
 
-docker - uses os level virtualization to deliver software in containers, a software platform that allows you to build, test and deploy applications quickly.
+With Lambda, you can run code without provisioning or managing servers, and you pay only for what you use. You are charged for the number of times that your code is invoked (requests) and for the time that your code runs, rounded up to the nearest 1 millisecond (ms) of duration.
+AWS rounds up duration to the nearest ms with no minimum run time. With this pricing, it can be cost effective to run functions whose execution time is very low, such as functions with durations under 100 ms or low latency APIs.
+
+aws fargate - serverless compute platform for ecs and eks, back end is managed for you, It achieves this by allocating the right amount of compute. This eliminates the need to choose and manage EC2 instances, cluster capacity, and scaling. 
+
+container - a  docker container, a package for your code its dependencies and configuration, containers run on top of ec2 instances and run in isolation. containers havea shorter boot up time then VMs which allows for super fast respone to ultra high demand. solves the issue of getting wsoftware to run erliably when moved from one compute environment to another.A container is a standardized unit that packages your code and its dependencies. This package is designed to run reliably on any platform, because the container creates its own independent environment. With containers, workloads can be carried from one place to another, such as from development to production or from on-premises environments to the cloud.
+
+Containers share the same operating system and kernel as the host that they exist on. But virtual machines contain their own operating system. Each virtual machine must maintain a copy of an operating system, which results in a degree of wasted resources. A container is more lightweight. Containers spin up quicker, almost instantly. This difference in startup time becomes instrumental when designing applications that must scale quickly during I/O bursts.
+Containers can provide speed, but virtual machines offer the full strength of an operating system and more resources, like package installation, dedicated kernel, and more.
+
+
+docker - uses os level virtualization to deliver software in containers, a software platform that allows you to build, test and deploy applications quickly. a popular container runtime that simplifies the management of the entire operating system stack required for container isolation, including networking and storage. Docker helps customers create, package, deploy, and run containers.
 
 kubernetes - enables you to deploy and manage containeized applications at a large scale, many conatainers, many clusters 
 
-container orchestration - processes to start stop and monitor containers over multiple ec2 instances.
+container orchestration - processes to start stop and monitor containers over multiple ec2 instances. containrers can run on ec2 instances. If you’re trying to manage your compute at a large scale, you should consider the following:
+How to place your containers on your instances, What happens if your container fails, What happens if your instance fails, How to monitor deployments of your containers. This coordination is handled by a container orchestration service
 
-amazon elastic container service, amazon elastic kubernetes service - these services are container orchestration tools and are run without the use of of conatiner orchestration software, can be run on top of ec2. 
+amazon elastic container service, amazon elastic kubernetes service - these services are container orchestration tools and are run without the use of of conatiner orchestration software, can be run on top of ec2. helps you spin up new containers. requires install of ecs container agent on your ec2 instance called a container instance. With ECS you can do the following: Launching and stopping containers, Getting cluster state, Scaling in and out, Scheduling the placement of containers across your cluster, Assigning permissions, Meeting availability requirements. To prepare your application to run on Amazon ECS, you create a task definition. The task definition is a text file, in JSON format, that describes one or more containers. A task definition is similar to a blueprint that describes the resources that you need to run a container, such as CPU, memory, ports, images, storage, and networking information. Here is a simple task definition that you can use for your corporate directory application. In this example, this runs on the Nginx web server.
 
-aws fargate - serversless compute platform for ecs and eks, back end is managed for you
+{
+"family": "webserver",
+"containerDefinitions": [ {
+"name": "web",
+"image": "nginx",
+"memory": "100",
+"cpu": "99"
+} ],
+"requiresCompatibilities": [ "FARGATE" ],
+"networkMode": "awsvpc",
+"memory": "512",
+"cpu": "256"
+}
+
+Amazon EKS is a managed service that you can use to run Kubernetes on AWS without needing to install, operate, and maintain your own Kubernetes control plane or nodes. Amazon EKS is conceptually similar to Amazon ECS, but with the following differences:In Amazon ECS, the machine that runs the containers is an EC2 instance that has an ECS agent installed and configured to run and manage your containers. This instance is called a container instance. In Amazon EKS, the machine that runs the containers is called a worker node or Kubernetes node. An ECS container is called a task. An EKS container is called a pod.
+
+Amazon ECS runs on AWS native technology. Amazon EKS runs on Kubernetes. 
 
 Suppose that a company’s application developer has an environment on their computer that is different from the environment on the computers used by the IT operations staff. The developer wants to ensure that the application’s environment remains consistent regardless of deployment, so they use a containerized approach. This helps to reduce time spent debugging applications and diagnosing differences in computing environments. 
 
 AWS global insfratructure:
 =================================================================================
 
-aws regions - eg. us-east, aws builds data centers all over the world close to places of high demand all interconnected on a high speed fiber network, customers get to choose which region they run their operation from and it can either explicitly be kept in that one region or be exported to another with right security credentials, this is important for security of information where certain data isnt allowed to leave a country. if youre not asked to specify an individual availability zone upon deployment this indicates that the service operates on a region-scoped level, in this case aws automatically performs actions to increase data durability and availability on the other hand if you are asked to specify an availiability zone then these tasks fall to you, this involves making sure your workload is replicated across multiple availability zones, you should use 2 availability zones at a minimum which will at least make your data redundant incase an availability zone fails  
+aws regions - eg. us-east, aws builds data centers all over the world close to places of high demand all interconnected on a high speed fiber network, customers get to choose which region they run their operation from and it can either explicitly be kept in that one region or be exported to another with right security credentials, this is important for security of information where certain data isnt allowed to leave a country. if youre not asked to specify an individual availability zone upon deployment this indicates that the service operates on a region-scoped level, in this case aws automatically performs actions to increase data durability and availability on the other hand if you are asked to specify an availiability zone then these tasks fall to you, this involves making sure your workload is replicated across multiple availability zones, you should use 2 availability zones at a minimum which will at least make your data redundant incase an availability zone fails, 4 main factors to consider when selecting a region are latency, price, service availability and compliance  
 
 4 factors are involved in selecting region: 
 
@@ -88,8 +139,34 @@ API - Every action you make in AWS is an API call thats authenticated and author
 AWS management console - browser based system typically used by noobs, easy to understand and increase knowledge of aws services, useful for building test environments, aws billing, monitoring resources, slow way of doing things because you need to manually design each instance with a browser.
 
 AWS CLI - allows you to script api calls instead of manually doing it on a browser, you can program them to run on a trigger or at a certain time and it limits errors from manual manipulation. can be accessed either by downloading the CLI to your computer or through the AWS console.
+For example, you run the following API call against a service, using the AWS CLI:
+aws s3api list-buckets
+You will get a response similar to the following one, listing the buckets in your AWS accounts:
+
+{
+    "Owner": {
+        "DisplayName": "tech-essentials", 
+        "ID": "d9881f40b83adh2896eb276f44ffch53677faec805422c83dfk60cc335a7da92"
+    }, 
+    "Buckets": [
+        {
+            "CreationDate": "2023-01-10T15:50:20.000Z", 
+            "Name": "aws-tech-essentials"
+        }, 
+        {
+            "CreationDate": "2023-01-10T16:04:15.000Z", 
+            "Name": "aws-tech-essentials-employee-directory-app"
+        } 
+    ]
+}
+
 
 AWS software development kits SDK - interact with aws resources through various programming languages eg. python , nodejs, ruby etc. Useful when you want to integrate your application source code with AWS services. For example, consider an application with a frontend that runs in Python. Every time the application receives a photo, it uploads the file to a storage service. This action can be achieved in the source code by using the AWS SDK for Python (Boto3). Here is an example of code that you can implement to work with AWS resources using the SDK for Python.
+
+import boto3
+ec2 = boto3.client('ec2')
+response = ec2.describe_instances()
+print(response)
 
 aws elastic beanstalk: a service thats takes your application code and configurations and builds your regional environment for you, this setup can be saved on beanstalk and redeployed with ease. focuses on application over infrastrucutre
 
@@ -99,11 +176,34 @@ aws cloud formation: an infrastructure as code tool using JSOn or yaml text base
 Networking introduction:
 =================================================================================
 
-Amazon virtual private cloud : launch aws resources in a virtual network with access to the internet or private aka subnets. vpc controls ip addresses and subnets, different resources are placed in different subnets. eg. ec2 instances or elb's
+ip address basics - 
 
-subnets: are chunks of ip addresses within your vpc that allow you to group resources together and controls whether resources are publically or privately available
+a basic ip address is 32 bits of 1s and 0s in binary
 
-aws direct connect - a completely private dedicated fiber connection from your data center to aws. much more reliable, secure and expensive compared to virtual private gateway or vpn, or public internet gateway.
+IPV4 notation: converts these 32 bits into 4 groups of 8 bits, each one of these 8 bits creates a unique number to create a unique ip address eg. 192.168.1.42
+
+CIDR notation: 192.168.1.30 is a single IP address. If you want to express IP addresses between the range of 192.168.1.0 and 192.168.1.255, how can you do that? One way is to use CIDR notation. CIDR notation is a compressed way of representing a range of IP addresses. Specifying a range determines how many IP addresses are available to you. eg. 192.168.1.0/24 It begins with a starting IP address and is separated by a forward slash (the / character) followed by a number. The number at the end specifies how many of the bits of the IP address are fixed. In this example, the first 24 bits of the IP address are fixed. The rest (the last 8 bits) are flexible ot the last octet or the last number after the decimal point, the 0.
+
+When working with networks in the AWS Cloud, you choose your network size by using CIDR notation. In AWS, the smallest IP range you can have is /28, which provides 16 IP addresses. The largest IP range you can have is a /16, which provides 65,536 IP addresses.
+
+these 5 things need to be done to setup your VPC -----
+
+1. Amazon virtual private cloud : the main way networks are configured in aws. launch aws resources in a virtual network with access to the internet or private aka subnets. vpc controls ip addresses and subnets, different resources are placed in different subnets. eg. ec2 instances or elb's. you need 2 pieces of info to setup a vpc: the region and the CIDR IP address range.
+
+2. subnets: are chunks of ip addresses within your vpc that allow you to group resources together and controls whether resources are publically or privately available. Think of subnets as smaller networks inside your base network or virtual LANS in a traditional network.  to create a subnet you need a vpc, availability zone, CIDR range. use public subnets for the internet and private subnets that wont be connected to the internet
+
+3. internet gateway: needs to be created and then attached to your vpc to gain access to the internet, literally connects you to the raw internet
+
+4. virtual private gateway: connects your vpc to another private network. When you create and attach a virtual private gateway to a VPC, the gateway acts as anchor on the AWS side of the connection. On the other side of the connection, you will need to connect a customer gateway to the other private network. A customer gateway device is a physical device or software application on your side of the connection. When you have both gateways, you can then establish an encrypted virtual private network (VPN) connection between the two sides.
+
+5. create a redundant network to reduce downtime and have higgh availability on a separate availability zone to increase redundancy. say you have one az with ip address 10.1.0.0/16, public subnet 10.1.1.0/24 and private subnet 10.1.3.0/24 you should have a redundant network with the same ip address along with a public subnet of 10.1.2.0/24 and private subnet of 10.1.4.0/24 
+
+reserved IPs - For AWS to configure your VPC appropriately, AWS reserves five IP addresses in each subnet. These IP addresses are used for routing, Domain Name System (DNS), and network management. For example, consider a VPC with the IP range 10.0.0.0/22. The VPC includes 1,024 total IP addresses. This is then divided into four equal-sized subnets, each with a /24 IP range with 256 IP addresses. Out of each of those IP ranges, there are only 251 IP addresses that can be used because AWS reserves five.
+AWS reserves five IP addresses in each subnet that cannot be assigned to a resource.
+
+The five reserved IP addresses can impact how you design your network. A common starting place for those who are new to the cloud is to create a VPC with an IP range of /16 and create subnets with an IP range of /24. This provides a large amount of IP addresses to work with at both the VPC and subnet levels.
+
+aws direct connect - a completely private dedicated fiber connection from your data center to aws. much more reliable, secure and expensive compared to virtual private gateway or vpn, or public internet gateway. To establish a secure physical connection between your on-premises data center and your Amazon VPC, you can use AWS Direct Connect. With AWS Direct Connect, your internal network is linked to an AWS Direct Connect location over a standard Ethernet fiber-optic cable. This connection allows you to create virtual interfaces directly to public AWS services or to your VPC.
 
 NACL - network access control list is a virtual firewall used by a subnet to control what packets are given access to the subnet from the gateway. by default NACLs  allow all  any packets in and out
 
@@ -133,7 +233,7 @@ amazon elastic block store - ebs volumes can be connected to ec2 instances and a
 
 ebs snapshot - is an incremental backup which means the first backup copies all data on disc while other increments only backup new data which is different to a full backup.
 
-amazon s3 - or amazon simple storage service is a data store for an unlimited amount of data,is an object level storage, stores objects in buckets, a file is stored as an object max 5 tb in size. objects can be versioned like in github and you can give permissions to each object. you can create multiple buckets. web enabled, regionally distributed, big cost saving compared to ebs, serverless, write once read many
+amazon s3 - or amazon simple storage service is a data store for an unlimited amount of data,is an object level storage, stores objects in buckets, a file is stored as an object max 5 tb in size. objects can be versioned like in github and you can give permissions to each object. you can create multiple buckets. web enabled, regionally distributed, big cost saving compared to ebs, serverless, write once read many. see s3 storage pricing here: https://aws.amazon.com/s3/pricing/
 
 storage classes:
 
@@ -246,6 +346,45 @@ user permissions and access - aws account owner is also the root user who has su
 
 aws id and access management - where you create IAM users and give them permissions. all actions are denied by default and need to be explicitly given access to each user, called the principle of least privilege. IAM policy is described in a JSONfile. IAM groups allow to distribute the same priviliges to a large number of people and each group can have different permissions. roles give a different set of permissions to a user based on the tasks that are performed on that day or the job role they have, used for temporary tasks, sheds previous permissions for the role permissions, is good for employees who rotate through different tasks each day, role priviliges usuallu expire within a time period of 15 minutes to 36 hours. IAM also handles multi factor authentication. Every user should be given an individual account and accounts should not be shared this increases security types of MFA multi factor authentication. IDP or identity providers is a way to manage employee identity information on a large scale eg. 300 + employees. IDP services in AWS include IAM identity center or 3rd party identity providers which stops you from creating separate IAM users for each user in AWS instead you can asswign an IAM role to provide permission to identities that are federated from your idp.
 
+IAM policy examples
+
+Most policies are stored in AWS as JSON documents with several policy elements. The following example provides admin access through an IAM identity-based policy.
+
+{
+"Version": "2012-10-17",
+"Statement": [{
+"Effect": "Allow",
+"Action": "*",
+"Resource": "*"
+}]
+}
+
+This policy has four major JSON elements: Version, Effect, Action, and Resource. The Version element defines the version of the policy language. It specifies the language syntax rules that are needed by AWS to process a policy. To use all the available policy features, include "Version": "2012-10-17" before the "Statement" element in your policies. The Effect element specifies whether the policy will allow or deny access. In this policy, the Effect is "Allow", which means you’re providing access to a particular resource. The Action element describes the type of action that should be allowed or denied. In the example policy, the action is "*". This is called a wildcard, and it is used to symbolize every action inside your AWS account. The Resource element specifies the object or objects that the policy statement covers. In the policy example, the resource is the wildcard "*". This represents all resources inside your AWS console.
+Putting this information together, you have a policy that allows you to perform all actions on all resources in your AWS account. This is what we refer to as an administrator policy.
+
+The next example shows a more granular IAM policy.
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyS3AccessOutsideMyBoundary",
+      "Effect": "Deny",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceAccount": [
+            "222222222222"
+          ]
+        }
+      }
+    }
+  ]
+}
+
 Federated: a process that allows for the transfer of identity and authentication information across a set of networked systems.   
 
 Virtual MFA: A software app that runs on a phone or other device that provides a one-time passcode. These applications can run on unsecured mobile devices, and because of that, they might not provide the same level of security as hardware or FIDO security keys. supported devices include: Twilio Authy Authenticator, Duo Mobile, LastPass Authenticator, Microsoft Authenticator, Google Authenticator, Symantec VIP
@@ -323,11 +462,14 @@ AWS free tier - enables you to begin certain services without incurring costs fo
 
 AWS pricing - there are 3 categories, pay for what you use where you pay only for the resources that you use without requiring long term contracts and licensing. pay less when you reserve which allows you to save up to 72 % on costs compared to on demand by reserving resources for a contracted period of 1 or 3 years and volume based discounts which based on the volume of usage will incur higher and higher discounts for example with s3 storage which decreases in cost when you reach a higher tier of usage.
 
-on demand instances - charges per hour/second, short term, unpredictable workloads
+on demand instances - charges per hour/second, short term, unpredictable workloads, no long term comitments or upfront payments, billing begins whenever instance is running, choice ot increase or decrease compute capacity
 
-reserved instances/savings plans - discount for 1 to 3 year commitments. standard reserved instance allows modification of availability zone, scope network type and instance size with the same instance type. Convertible reserved instance allows exchange of one or more convertible reserved instances with a different config including instance family, OS and tenency. there are no limits to how often an exchange can be performed as long as the target convertible reserved instance is of equal or greater value than the previous.
+reserved instances/savings plans - discount for 1 to 3 year commitments. standard reserved instance allows modification of availability zone, scope network type and instance size with the same instance type. Convertible reserved instance allows exchange of one or more convertible reserved instances with a different config including instance family, OS and tenency. there are no limits to how often an exchange can be performed as long as the target convertible reserved instance is of equal or greater value than the previous. Applies to EC2, Lambda and fargate. for workloads that have consistent and steady usage. instances need to be reserved or scheduled
 
-spot instances - for applications with flexible start and end times, urgent computing needs for large capacity, up to 90% discount.
+spot instances - for applications with flexible start and end times, urgent computing needs for large capacity, up to 90% discount. Utilizes spare compute capacity. recommended for users with fault tolerant or stateless workloads. With Spot Instances, you set a limit on how much you want to pay for the instance hour. This is compared against the current Spot price that AWS determines. Spot Instance prices adjust gradually based on long-term trends in supply and demand for Spot Instance capacity. If the amount that you pay is more than the current Spot price and there is capacity, you will receive an instance.         
+
+dedicated hosts - A Dedicated Host is a physical Amazon EC2 server that is dedicated for your use. Dedicated Hosts can help you reduce costs because you can use your existing server-bound software licenses, such as Windows Server, SQL Server, and Oracle licenses. And they can also help you meet compliance requirements. Amazon EC2 Dedicated Host is also integrated with AWS License Manager, a service that helps you manage your software licenses, including Microsoft Windows Server and Microsoft SQL Server licenses. Dedicated Hosts can be purchased on demand (hourly).
+Dedicated Hosts can be purchased as a Reservation for up to 70 percent off the On-Demand price.
 
 AWS pricing calculator - explore aws services and create estimates for the cost of your use cases and cost centres. plan your system and resources then calculate how much this systen will cost 
 
@@ -503,5 +645,16 @@ Amortized costs:able to show daily cost breakdowns of everything, even your mont
 
 blended costs: Blended costs are calculated by multiplying each account’s service usage against something called a blended rate. A blended rate is the average rate of on-demand usage, as well as Savings Plans- and reservation-related usage, that is consumed by member accounts in an organization for a particular service.
 
+===============================================================================================
+Compute as a service 
 
+there are 3 available compute options: Virtual machines, container services and serverless, more info on these topics in above sections 
 
+container services include: Amazon Elastic compute service and Elastic kubernetes service 
+serverless include:  Lambda and Fargate
+Virtul machines incluse: EC2
+
+Virtual machines: easiest to setup, emulates a physical server and allows install of a Http server to run applications. Hypervisor is needed to install a vm on AWS, which controls hardware resources for your vm. Amazon elastic cloud EC2 aids in setup of hypervisor and host machines during setup and installs the VM operating system
+
+Servers: the first building block you need to host an application. Srevers usually handle HTTP requests and send responses following the client server model. ALthough any API based communication also falls under this model. Common HTTP servers include:
+Windows options, suc as internet information sewrvice IIS and Linux options such as Apache HTTP server, Nginx, and Apache Tomcat.

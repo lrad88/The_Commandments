@@ -114,7 +114,8 @@ VIM
 i - to insert new text
 :colorscheme space tab - change vim colorscheme
 wq! w! - force write to files
-/word enter n N - how to find word. enter then n to next 
+/word enter n N - how to find word. enter then n to next
+esc u - undo previous input before save, save often ! 
 ----------------------------------------------------------------------------------------------------
 
 IMPORTANT FOLDERS
