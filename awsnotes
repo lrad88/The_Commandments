@@ -186,7 +186,7 @@ CIDR notation: 192.168.1.30 is a single IP address. If you want to express IP ad
 
 When working with networks in the AWS Cloud, you choose your network size by using CIDR notation. In AWS, the smallest IP range you can have is /28, which provides 16 IP addresses. The largest IP range you can have is a /16, which provides 65,536 IP addresses.
 
-these 5 things need to be done to setup your VPC -----
+these numbered steps  need to be done to setup your VPC -----
 
 1. Amazon virtual private cloud : the main way networks are configured in aws. launch aws resources in a virtual network with access to the internet or private aka subnets. vpc controls ip addresses and subnets, different resources are placed in different subnets. eg. ec2 instances or elb's. you need 2 pieces of info to setup a vpc: the region and the CIDR IP address range.
 
@@ -196,7 +196,19 @@ these 5 things need to be done to setup your VPC -----
 
 4. virtual private gateway: connects your vpc to another private network. When you create and attach a virtual private gateway to a VPC, the gateway acts as anchor on the AWS side of the connection. On the other side of the connection, you will need to connect a customer gateway to the other private network. A customer gateway device is a physical device or software application on your side of the connection. When you have both gateways, you can then establish an encrypted virtual private network (VPN) connection between the two sides.
 
-5. create a redundant network to reduce downtime and have higgh availability on a separate availability zone to increase redundancy. say you have one az with ip address 10.1.0.0/16, public subnet 10.1.1.0/24 and private subnet 10.1.3.0/24 you should have a redundant network with the same ip address along with a public subnet of 10.1.2.0/24 and private subnet of 10.1.4.0/24 
+5. create a redundant network to reduce downtime and have high availability on a separate availability zone to increase redundancy. say you have one az with ip address 10.1.0.0/16, public subnet 10.1.1.0/24 and private subnet 10.1.3.0/24 you should have a redundant network with the same ip address along with a public subnet of 10.1.2.0/24 and private subnet of 10.1.4.0/24 
+
+6. create route tables to direct network traffic, A main route table is made automatically by default and will direct traffic to all subnets that dont have an explicit route table built for them, this is not correct ifyou have private subnets so 2 separate route tables need to be made to direct traffic to the public and private subnets as you want, to make a public route table to connect to an internet gateway you enter edit routes and add a destination usually 0.0.0.0/0 with an internet gateway target and then associate the public subnets, the same needs to be done for your private route table but associate it with your private subnets and dont connect it to the internet, a local target will suffice.  The following rules apply to the main route table:
+
+    You cannot delete the main route table.
+    You cannot set a gateway route table as the main route table.
+    You can replace the main route table with a custom subnet route table.
+    You can add, remove, and modify routes in the main route table.
+    You can explicitly associate a subnet with the main route table, even if it's already implicitly associated. 
+
+7. secure your subnets with network access control lists, these are virtual firewalls for your subnets that control what kind of traffic is allowed to enter or leave your subnet, you can configure this with inbound and outbound rules that can prevent HTTPS traffic for example. Network ACLs are considered stateless, so you need to include both the inbound and outbound ports used for the protocol. If you don’t include the outbound range, your server would respond but the traffic would never leave the subnet.
+
+8. Secure EC2 instanes with security groups, another virtual firewall for EC2 instances. the default configuration of a security group blocks all inbound traffic and allows all outbound traffic. By default, a security group only allows outbound traffic. To allow inbound traffic, you must create inbound rules.You might be wondering, “Wouldn’t this block all EC2 instances from receiving the response of any customer requests?” Well, security groups are stateful. That means that they will remember if a connection is originally initiated by the EC2 instance or from the outside, and temporarily allow traffic to respond without modifying the inbound rules. If you want your EC2 instance to accept traffic from the internet, you must open up inbound ports. If you have a web server, you might need to accept HTTP and HTTPS requests to allow that type of traffic into your security group. You learned earlier that subnets can be used to segregate traffic between computers in your network. Security groups can be used in the same way. A common design pattern is to organize resources into different groups and create security groups for each to control network communication between them. This example defines three tiers and isolates each tier with defined security group rules. In this case, internet traffic to the web tier is allowed over HTTPS. Web tier to application tier traffic is allowed over HTTP, and application tier to database tier traffic is allowed over MySQL. This is different from traditional on-premises environments, in which you isolate groups of resources with a VLAN configuration. In AWS, security groups allow you to achieve the same isolation without tying the security groups to your network.
 
 reserved IPs - For AWS to configure your VPC appropriately, AWS reserves five IP addresses in each subnet. These IP addresses are used for routing, Domain Name System (DNS), and network management. For example, consider a VPC with the IP range 10.0.0.0/22. The VPC includes 1,024 total IP addresses. This is then divided into four equal-sized subnets, each with a /24 IP range with 256 IP addresses. Out of each of those IP ranges, there are only 251 IP addresses that can be used because AWS reserves five.
 AWS reserves five IP addresses in each subnet that cannot be assigned to a resource.
@@ -225,13 +237,47 @@ Storage and databases:
 
 ec2 gives access to all physical resources including storage, lets look at storage services in aws.
 
-instance stores (block level storage) - stores data in blocks so that if information is changed onlythe block containing the information is changed this is good for databases, enterprse software and file systems and his how data is written to hard drive. the problem with this storage is that ec2 instances can start on any host within a region and therefore if you write data to a certain host theres no guarantee that ec2 instance will go back to the same host or server which is why if you clsoe the instance the data is deleted from that host. this storage is then good for temporary data that can be erased without issue. dont write important data to storage on ec2 instances !
+AWS storage services are grouped into 3 categories: File storage, block storage and object storage.  In file storage, data is stored as files in a hierarchy. In block storage, data is stored in fixed-size blocks. And in object storage, data is stored as objects in buckets
 
-object storage - by contrast when a file in object storage is modified the entire object is rewritten instead of just a nuber of blocks like with block level storage.
+file storage: used in windows file explorer or MAC finder. files are organized in a tree like heirarchy that consist of folders and subfolders. Each file has metadata such as file name, file size, and the date the file was created. The file also has a path, for example, computer/Application_files/Cat_photos/cats-03.png. When you need to retrieve a file, your system can use the path to find it in the file hierarchy. File storage is ideal when you require centralized access to files that must be easily shared and managed by multiple host computers. Typically, this storage is mounted onto multiple hosts, and requires file locking and integration with existing file system communication protocols. Use cases for file storage:
 
-amazon elastic block store - ebs volumes can be connected to ec2 instances and are a perminent form of data storage. ebs allows you to take snapshots or backups of your data and is used for data that is good for storage in blocks like video files thats need to be edited from the cloud so that the entire video file doesnt need to be uploaded like an s3 storage class everytime a write is done. solid state by default with hdd options, sizes up to 16TiB. you need ot be in the same availability zone or datacenter to attach ec2 instances.if your storage is filled thats all you get within your plan. stores data in a single availability zone or data centre
+web serving: Cloud file storage solutions follow common file-level protocols, file naming conventions, and permissions that developers are familiar with. Therefore, file storage can be integrated into web applications.
 
-ebs snapshot - is an incremental backup which means the first backup copies all data on disc while other increments only backup new data which is different to a full backup.
+Analytics: Many analytics workloads interact with data through a file interface and rely on features such as file lock or writing to portions of a file. Cloud-based file storage supports common file-level protocols and has the ability to scale capacity and performance. Therefore, file storage can be conveniently integrated into analytics workflows.
+
+Media and entrtainment: Many businesses use a hybrid cloud deployment and need standardized access using file system protocols (NFS or SMB) or concurrent protocol access. Cloud file storage follows existing file system semantics. Therefore, storage of rich media content for processing and collaboration can be integrated for content production, digital supply chains, media streaming, broadcast playout, analytics, and archive.
+
+Home directories: Businesses wanting to take advantage of the scalability and cost benefits of the cloud are extending access to home directories for many of their users. Cloud file storage systems adhere to common file-level protocols and standard permissions models. Therefore, customers can lift and shift applications that need this capability to the cloud.
+
+instance stores (block level storage) - stores data in blocks so that if information is changed only the block containing the information is changed this is good for databases, enterprse software and file systems and his how data is written to hard drive. the problem with this storage is that ec2 instances can start on any host within a region and therefore if you write data to a certain host theres no guarantee that ec2 instance will go back to the same host or server which is why if you clsoe the instance the data is deleted from that host. this storage is then good for temporary data that can be erased without issue. dont write important data to storage on ec2 instances. good for frequently updated data like app or system files. Block storage is also good for :
+
+Transactional workloads: Organizations that process time-sensitive and mission-critical transactions store such workloads into a low-latency, high-capacity, and fault-tolerant database. Block storage allows developers to set up a robust, scalable, and highly efficient transactional database. Because each block is a self-contained unit, the database performs optimally, even when the stored data grows.
+
+Containers: Developers use block storage to store containerized applications on the cloud. Containers are software packages that contain the application and its resource files for deployment in any computing environment. Like containers, block storage is equally flexible, scalable, and efficient. With block storage, developers can migrate the containers seamlessly between servers, locations, and operating environments.
+
+Virtul machines: Block storage supports popular virtual machine (VM) hypervisors. Users can install the operating system, file system, and other computing resources on a block storage volume. They do so by formatting the block storage volume and turning it into a VM file system. So they can readily increase or decrease the virtual drive size and transfer the virtualized storage from one host to another.
+
+
+object storage - by contrast when a file in object storage is modified the entire object is rewritten instead of just a nuber of blocks like with block level storage. Object storage often follows a write once read many model.
+
+Data archiving: Cloud object storage is excellent for long-term data retention. You can cost-effectively archive large amounts of rich media content and retain mandated regulatory data for extended periods of time. You can also use cloud object storage to replace on-premises tape and disk archive infrastructure. This storage solution provides enhanced data durability, immediate retrieval times, better security and compliance, and greater data accessibility. 
+
+Backup and recovery: You can configure object storage systems to replicate content so that if a physical device fails, duplicate object storage devices become available. This ensures that your systems and applications continue to run without interruption. You can also replicate data across multiple data centers and geographical regions.
+
+Rich media: With object storage, you can accelerate applications and reduce the cost of storing rich media files such as videos, digital images, and music. By using storage classes and replication features, you can create cost-effective, globally replicated architecture to deliver media to distributed users. 
+
+amazon elastic block store - if you delete the the ec2 instance then the ebs storage for that instance is also deleted which is why this called ephemeral storage, the life cycle of the data is tied to the lifecycle of the instance. ideal for hadoop clusters. ebs volumes only work through ec2 instances, id your instance is stopped or terminated or there is an accident or crash, your data is saved in a snapshot. ebs allows you to take snapshots or backups of your data and is used for data that is good for storage in blocks like video files thats need to be edited from the cloud so that the entire video file doesnt need to be uploaded like an s3 storage class everytime a write is done. solid state by default with hdd options, sizes up to 16TiB. you need ot be in the same availability zone or datacenter to attach ec2 instances.if your storage is filled thats all you get within your plan. stores data in a single availability zone or data centre. you can have the same EBS volume attached to multiple instances, this is called EBS multi attach. here are the best use cases for ebs:
+
+
+Operating systems: Boot and root volumes can be used to store an operating system. The root device for an instance launched from an Amazon Machine Image (AMI) is typically an EBS volume. These are commonly referred to as EBS-backed AMIs.
+
+Databases: As a storage layer for databases running on Amazon EC2 that will scale with your performance needs and provide consistent and low-latency performance.
+
+Enterprise applications: Amazon EBS provides high availability and high durability block storage to run business-critical applications.
+
+Big data analytics engingines: Amazon EBS offers data persistence, dynamic performance adjustments, and the ability to detach and reattach volumes, so you can resize clusters for big data analytics.
+
+ebs snapshot - is an incremental backup which means the first backup copies all data on disc while other increments only backup new data which is different to a full backup. stored in multiple availability zones.
 
 amazon s3 - or amazon simple storage service is a data store for an unlimited amount of data,is an object level storage, stores objects in buckets, a file is stored as an object max 5 tb in size. objects can be versioned like in github and you can give permissions to each object. you can create multiple buckets. web enabled, regionally distributed, big cost saving compared to ebs, serverless, write once read many. see s3 storage pricing here: https://aws.amazon.com/s3/pricing/
 
@@ -257,7 +303,7 @@ s3 outposts - creates s3 buckets on amazon s3 outposts. delivers object storage 
 
 s3 intelligent tiering - for data with changing access patterns, requires a small monthly monitoring and automation fee per object. monitors your data usage and places it into an s3 tier for you and will change it based on usage. Moves objects between a frequent access tier (s3 standard) and an infrequent access tier (s3 standard IA), can also actually monitor object access patterns
 
-elastic file system EFS - is a linux file system, can be accessed from anywhere in the region, data storage automatically is scaled up in size when used without disrupting applications. is a form of file storage compared to block storage. Ideal for cases where a large number of services and resources need access to the same data at the same time
+elastic file system EFS - is a linux file system, can be accessed from anywhere in the region, data storage automatically is scaled up in size when used without disrupting applications. is a form of file storage compared to block storage. Ideal for cases where a large number of services and resources need access to the same data at the same time, you can have efs configured for one zone or multiple zones 
   
 Amazon fsx - fully managed service, choose between 4 widely used file systems: NetApp ONTAP, OpenZFS, Window File Server and Lustre
 
