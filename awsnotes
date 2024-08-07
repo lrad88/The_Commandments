@@ -46,15 +46,134 @@ Terminating an instance: this will erase the instance nd you will lose all confi
 ec2 locations- unless speccified, when you launch ec2 instances they are in a default vpc. the
 default vpc is public and accessible by the internet so dont place any customer data or private information. this should replaced with a custom vpc when you know how to configure it
 
-amazon ec2 auto scaling - allows for server resources to auto scale based on your companies needs, based on dynamic or predictive scaling or both
+amazon ec2 autoscaling - allows for server resources to auto scale based on your companies needs, based on dynamic or predictive scaling or both
 
-scaling up - adding more power to machines that are running
-scaling out - adding more instances
+vertical scaling - adding more power to machines that are running. Increase the instance size. If too many requests are sent to a single active-passive system, the active server will become unavailable and, hopefully, fail over to the passive server. But this doesn’t solve anything.
 
+With active-passive systems, you need vertical scaling. This means increasing the size of the server. With EC2 instances, you select either a larger type or a different instance type. This can be done only while the instance is in a stopped state. In this scenario, the following steps occur:
+
+Stop the passive instance. This doesn’t impact the application because it’s not taking any traffic.
+    Change the instance size or type, and then start the instance again.
+    Shift the traffic to the passive instance, turning it active.
+    Stop, change the size, and start the previous active instance because both instances should match.
+
+When the number of requests reduces, you must do the same operation. Even though there aren’t that many steps involved, it’s actually a lot of manual work. Another disadvantage is that a server can only scale vertically up to a certain limit. When that limit is reached, the only option is to create another active-passive system and split the requests and functionalities across them. This can require massive application rewriting.
+
+This is where the active-active system can help. When there are too many requests, you can scale this system horizontally by adding more servers.
+
+horizontal scaling - adding more instances, Add additional instances. As mentioned, for the application to work in an active-active system, it’s already created as stateless, not storing any client sessions on the server. This means that having two or four servers wouldn’t require any application changes. It would only be a matter of creating more instances when required and shutting them down when traffic decreases. The Amazon EC2 Auto Scaling service can take care of that task by automatically creating and removing EC2 instances based on metrics from Amazon CloudWatch. We will learn more about this service in this lesson.
+You can see that there are many more advantages to using an active-active system in comparison with an active-passive system. Modifying your application to become stateless provides scalability.
+
+auto scaling components: There are three main components of Amazon EC2 Auto Scaling. Each of these components addresses one main question as follows:
+
+Launch template or configuration: Which resources should be automatically scaled?
+Amazon EC2 Auto Scaling groups: Where should the resources be deployed?
+Scaling policies: When should the resources be added or removed?
 you can set the minimum, desired or maximum number of instances for your autoscaling group
 
-elastic load balancing - directs traffic to servers in an even way so that each servers load is balanced, runs at the region level, automatically scalable, a single url that the entire front end uses to communicate with the backend, makes backend frontend communication much more simple. automatically distributes incoming traffic across multiple targets in one or more availability zones
+templates: You can use a launch template to manually launch an EC2 instance or for use with Amazon EC2 Auto Scaling. It also supports versioning, which can be used for quickly rolling back if there's an issue or a need to specify a default version of the template. This way, while iterating on a new version, other users can continue launching EC2 instances using the default version until you make the necessary changes. You can create a launch template in one of three ways as follows:
+Use an existing EC2 instance. All the settings are already defined.
 
+Create one from an already existing template or a previous version of a launch template.
+
+Create a template from scratch. These parameters will need to be defined: AMI ID, instance type, key pair, security group, storage, and resource tags.
+
+autoscaling groups:
+
+The next component Amazon EC2 Auto Scaling needs is an Amazon EC2 Auto Scaling group. An Auto Scaling group helps you define where Amazon EC2 Auto Scaling deploys your resources. This is where you specify the Amazon Virtual Private Cloud (Amazon VPC) and subnets the EC2 instance should be launched in. Amazon EC2 Auto Scaling takes care of creating the EC2 instances across the subnets, so select at least two subnets that are across different Availability Zones.
+
+With Auto Scaling groups, you can specify the type of purchase for the EC2 instances. You can use On-Demand Instances or Spot Instances. You can also use a combination of the two, which means you can take advantage of Spot Instances with minimal administrative overhead.
+
+To specify how many instances Amazon EC2 Auto Scaling should launch, you have three capacity settings to configure for the group size.
+
+minimum capacity: This is the minimum number of instances running in your Auto Scaling group, even if the threshold for lowering the number of instances is reached.
+When Amazon EC2 Auto Scaling removes EC2 instances because the traffic is minimal, it keeps removing EC2 instances until it reaches a minimum capacity. 
+When reaching that limit, even if Amazon EC2 Auto Scaling is instructed to remove an instance, it does not. This ensures that the minimum is kept. Note: Depending on your application, using a minimum of two is recommended to ensure high availability. However, you ultimately know how many EC2 instances at a bare minimum your application requires at all times.
+
+desired capacity: The desired capacity is the number of EC2 instances that Amazon EC2 Auto Scaling creates at the time the group is created. This number can only be within or equal to the minimum or maximum. 
+If that number decreases, Amazon EC2 Auto Scaling removes the oldest instance by default. If that number increases, Amazon EC2 Auto Scaling creates new instances using the launch template.
+
+maximum capacity: This is the maximum number of instances running in your Auto Scaling group, even if the threshold for adding new instances is reached.
+When traffic keeps growing, Amazon EC2 Auto Scaling keeps adding EC2 instances. This means the cost for your application will also keep growing. That’s why you must set a maximum amount to ensure it doesn’t go above your budget.
+
+scaling policies - By default, an Auto Scaling group will be kept to its initial desired capacity. While it’s possible to manually change the desired capacity, you can also use scaling policies.
+
+simple scaling policy: With a simple scaling policy, you can do exactly what’s described in this module. You use a CloudWatch alarm and specify what to do when it is invoked. This can include adding or removing a number of EC2 instances or specifying a number of instances to set the desired capacity to. You can specify a percentage of the group instead of using a number of EC2 instances, which makes the group grow or shrink more quickly.
+After the scaling policy is invoked, it enters a cooldown period before taking any other action. This is important because it takes time for the EC2 instances to start, and the CloudWatch alarm might still be invoked while the EC2 instance is booting. For example, you might decide to add an EC2 instance if the CPU utilization across all instances is above 65 percent. You don’t want to add more instances until that new EC2 instance is accepting traffic. However, what if the CPU utilization is now above 85 percent across the Auto Scaling group?
+Adding one instance might not be the right move. Instead, you might want to add another step in your scaling policy. Unfortunately, a simple scaling policy can’t help with that. This is where a step scaling policy helps. 
+
+step scaling policy: Step scaling policies respond to additional alarms even when a scaling activity or health check replacement is in progress. Similar to the previous example, you might decide to add two more instances when CPU utilization is at 85 percent and four more instances when it’s at 95 percent.
+Deciding when to add and remove instances based on CloudWatch alarms might seem like a difficult task. This is why the third type of scaling policy exists—target tracking.
+
+target tracking scaling policy: If your application scales based on average CPU utilization, average network utilization (in or out), or request count, then this scaling policy type is the one to use. All you need to provide is the target value to track, and it automatically creates the required CloudWatch alarms.
+
+elastic load balancing elb - directs traffic to servers in an even way so that each servers load is balanced, runs at the region level, automatically scalable, a single url that the entire front end uses to communicate with the backend, makes backend frontend communication much more simple. automatically distributes incoming traffic across multiple targets in one or more availability zones. Load balancing refers to the process of distributing tasks across a set of resources. In the case of the Employee Directory application, the resources are EC2 instances that host the application, and the tasks are the requests being sent. You can use a load balancer to distribute the requests across all the servers hosting the application.
+To do this, the load balancer needs to take all the traffic and redirect it to the backend servers based on an algorithm. The most popular algorithm is round robin, which sends the traffic to each server one after the other. The ELB service provides a major advantage over using your own solution to do load balancing. Mainly, you don’t need to manage or operate ELB. It can distribute incoming application traffic across EC2 instances, containers, IP addresses, and Lambda functions. Other key features include the following:
+
+elb with ec2 autoscaling: s soon as a new EC2 instance is added to or removed from the Amazon EC2 Auto Scaling group, ELB is notified. However, before ELB can send traffic to a new EC2 instance, it needs to validate that the application running on the EC2 instance is available.
+This validation is done by way of the ELB health checks feature you learned about in the previous lesson. features include integration with amazon ec2 autoscaling directring incoming traffic to instances
+
+Hybrid mode – Because ELB can load balance to IP addresses, it can work in a hybrid mode, which means it also load balances to on-premises servers.
+High availability – ELB is highly available. The only option you must ensure is that the load balancer's targets are deployed across multiple Availability Zones.
+Scalability – In terms of scalability, ELB automatically scales to meet the demand of the incoming traffic. It handles the incoming traffic and sends it to your backend application.
+
+health checks - Monitoring is an important part of load balancers because they should route traffic to only healthy EC2 instances. That’s why ELB supports two types of health checks as follows:
+
+Establishing a connection to a backend EC2 instance using TCP and marking the instance as available if the connection is successful.
+Making an HTTP or HTTPS request to a webpage that you specify and validating that an HTTP response code is returned.
+
+Taking time to define an appropriate health check is critical. Only verifying that the port of an application is open doesn’t mean that the application is working. It also doesn’t mean that making a call to the home page of an application is the right way either.
+
+After determining the availability of a new EC2 instance, the load balancer starts sending traffic to it. If ELB determines that an EC2 instance is no longer working, it stops sending traffic to it and informs Amazon EC2 Auto Scaling. It is the responsibility of Amazon EC2 Auto Scaling to remove that instance from the group and replace it with a new EC2 instance. Traffic is only sent to the new instance if it passes the health check.
+If Amazon EC2 Auto Scaling has a scaling policy that calls for a scale down action, it informs ELB that the EC2 instance will be terminated. ELB can prevent Amazon EC2 Auto Scaling from terminating an EC2 instance until all connections to the instance end. It also prevents any new connections. This feature is called connection draining. We will learn more about Amazon EC2 Auto Scaling in the next lesson.
+
+elb components - three componentes = rule: To associate a target group to a listener, you must use a rule. Rules are made up of two conditions. The first condition is the source IP address of the client. The second condition decides which target group to send the traffic to. 
+
+Listener: The client connects to the listener. This is often called client side. To define a listener, a port must be provided in addition to the protocol, depending on the load balancer type. There can be many listeners for a single load balancer.
+
+target group:  The backend servers, or server side, are defined in one or more target groups. This is where you define the type of backend you want to direct traffic to, such as EC2 instances, Lambda functions, or IP addresses. Also, a health check must be defined for each target group. 
+
+load balancer types- 
+
+application load balancer -  for User authorization, Rich metrics and logging, Redirects, Fixed response. An Application Load Balancer functions at Layer 7 of the Open Systems Interconnection (OSI) model. It is ideal for load balancing HTTP and HTTPS traffic. After the load balancer receives a request, it evaluates the listener rules in priority order to determine which rule to apply. It then routes traffic to targets based on the request content. The primary features of alb include:
+
+routes traffic based on request data: An Application Load Balancer makes routing decisions based on the HTTP and HTTPS protocol. For example, the ALB could use the URL path (/upload) and host, HTTP headers and method, or the source IP address of the client. This facilitates granular routing to target groups.
+
+sends responses directly to the client: An Application Load Balancer can reply directly to the client with a fixed response, such as a custom HTML page. It can also send a redirect to the client. This is useful when you must redirect to a specific website or redirect a request from HTTP to HTTPS. It removes that work from your backend servers.
+
+uses tls offloading: An Application Load Balancer understands HTTPS traffic. To pass HTTPS traffic through an Application Load Balancer, an SSL certificate is provided one of the following ways:
+
+    Importing a certificate by way of IAM or ACM services
+    Creating a certificate for free using ACM
+
+This ensures that the traffic between the client and Application Load Balancer is encrypted.
+
+authenticates users: An Application Load Balancer can authenticate users before they can pass through the load balancer. The Application Load Balancer uses the OpenID Connect (OIDC) protocol and integrates with other AWS services to support protocols, such as the following:
+
+    SAML
+    Lightweight Directory Access Protocol (LDAP)
+    Microsoft Active Directory
+    Others
+
+secures traffic: To prevent traffic from reaching the load balancer, you configure a security group to specify the supported IP address ranges.
+
+supports sticky sessions:  If requests must be sent to the same backend server because the application is stateful, use the sticky session feature. This feature uses an HTTP cookie to remember which server to send the traffic to across connections.
+
+network load balancer -  TCP and User Datagram Protocol (UDP) connection based, Source IP preservation, Low latency. A Network Load Balancer is ideal for load balancing TCP and UDP traffic. It functions at Layer 4 of the OSI model, routing connections from a target in the target group based on IP protocol data, works with tls . primary features of nlb's include:
+
+sticky sessions: Routes requests from the same client to the same target.
+low latency: Offers low latency for latency-sensitive applications.
+source ip address: Preserves the client-side source IP address.
+static ip support: Automatically provides a static IP address per Availability Zone (subnet).
+elastic ip address support: Lets users assign a custom, fixed IP address per Availability Zone (subnet).
+dns failover: Uses Amazon Route 53 to direct traffic to load balancer nodes in other zones.
+
+gateway load balancer: works with ip traffic, Health checks, Gateway Load Balancer Endpoints, Higher availability for third-party virtual appliances. A Gateway Load Balancer helps you to deploy, scale, and manage your third-party appliances, such as firewalls, intrusion detection and prevention systems, and deep packet inspection systems. It provides a gateway for distributing traffic across multiple virtual appliances while scaling them up and down based on demand. here are som feratures of the glb:
+
+high availability: Ensures high availability and reliability by routing traffic through healthy virtual appliances.
+monitoring: Can be monitored using CloudWatch metrics.
+streamlined deployments: Can deploy a new virtual appliance by selecting it in the AWS Marketplace.
+private connectivity: Connects internet gateways, virtual private clouds (VPCs), and other network resources over a private network.
 
 messaging and queing
 =================================================================================
@@ -78,7 +197,7 @@ AWS rounds up duration to the nearest ms with no minimum run time. With this pri
 
 aws fargate - serverless compute platform for ecs and eks, back end is managed for you, It achieves this by allocating the right amount of compute. This eliminates the need to choose and manage EC2 instances, cluster capacity, and scaling. 
 
-container - a  docker container, a package for your code its dependencies and configuration, containers run on top of ec2 instances and run in isolation. containers havea shorter boot up time then VMs which allows for super fast respone to ultra high demand. solves the issue of getting wsoftware to run erliably when moved from one compute environment to another.A container is a standardized unit that packages your code and its dependencies. This package is designed to run reliably on any platform, because the container creates its own independent environment. With containers, workloads can be carried from one place to another, such as from development to production or from on-premises environments to the cloud.
+container - a  docker container, all containers share the same OS kernel,  a package for your code its dependencies and configuration, containers run on top of ec2 instances and run in isolation. containers havea shorter boot up time then VMs which allows for super fast respone to ultra high demand. solves the issue of getting wsoftware to run erliably when moved from one compute environment to another.A container is a standardized unit that packages your code and its dependencies. This package is designed to run reliably on any platform, because the container creates its own independent environment. With containers, workloads can be carried from one place to another, such as from development to production or from on-premises environments to the cloud.
 
 Containers share the same operating system and kernel as the host that they exist on. But virtual machines contain their own operating system. Each virtual machine must maintain a copy of an operating system, which results in a degree of wasted resources. A container is more lightweight. Containers spin up quicker, almost instantly. This difference in startup time becomes instrumental when designing applications that must scale quickly during I/O bursts.
 Containers can provide speed, but virtual machines offer the full strength of an operating system and more resources, like package installation, dedicated kernel, and more.
@@ -232,7 +351,7 @@ route 53 : aws domain name service. routes  domain names to ip addresses based o
 amazon cloud front: is a content delivery network and connects edge networks to primary infrastructure to get the least latent data to the customer
 
 
-Storage and databases:
+Storage:
 =================================================================================
 
 ec2 gives access to all physical resources including storage, lets look at storage services in aws.
@@ -255,10 +374,9 @@ Transactional workloads: Organizations that process time-sensitive and mission-c
 
 Containers: Developers use block storage to store containerized applications on the cloud. Containers are software packages that contain the application and its resource files for deployment in any computing environment. Like containers, block storage is equally flexible, scalable, and efficient. With block storage, developers can migrate the containers seamlessly between servers, locations, and operating environments.
 
-Virtul machines: Block storage supports popular virtual machine (VM) hypervisors. Users can install the operating system, file system, and other computing resources on a block storage volume. They do so by formatting the block storage volume and turning it into a VM file system. So they can readily increase or decrease the virtual drive size and transfer the virtualized storage from one host to another.
+Virtual machines: Block storage supports popular virtual machine (VM) hypervisors. Users can install the operating system, file system, and other computing resources on a block storage volume. They do so by formatting the block storage volume and turning it into a VM file system. So they can readily increase or decrease the virtual drive size and transfer the virtualized storage from one host to another.
 
-
-object storage - by contrast when a file in object storage is modified the entire object is rewritten instead of just a nuber of blocks like with block level storage. Object storage often follows a write once read many model.
+object storage - by contrast when a file in object storage is modified the entire object is rewritten instead of just a number of blocks like with block level storage. Object storage often follows a write once read many model like with amazon s3 and bucket storage. see amazon s3 for more info
 
 Data archiving: Cloud object storage is excellent for long-term data retention. You can cost-effectively archive large amounts of rich media content and retain mandated regulatory data for extended periods of time. You can also use cloud object storage to replace on-premises tape and disk archive infrastructure. This storage solution provides enhanced data durability, immediate retrieval times, better security and compliance, and greater data accessibility. 
 
@@ -266,8 +384,9 @@ Backup and recovery: You can configure object storage systems to replicate conte
 
 Rich media: With object storage, you can accelerate applications and reduce the cost of storing rich media files such as videos, digital images, and music. By using storage classes and replication features, you can create cost-effective, globally replicated architecture to deliver media to distributed users. 
 
-amazon elastic block store - if you delete the the ec2 instance then the ebs storage for that instance is also deleted which is why this called ephemeral storage, the life cycle of the data is tied to the lifecycle of the instance. ideal for hadoop clusters. ebs volumes only work through ec2 instances, id your instance is stopped or terminated or there is an accident or crash, your data is saved in a snapshot. ebs allows you to take snapshots or backups of your data and is used for data that is good for storage in blocks like video files thats need to be edited from the cloud so that the entire video file doesnt need to be uploaded like an s3 storage class everytime a write is done. solid state by default with hdd options, sizes up to 16TiB. you need ot be in the same availability zone or datacenter to attach ec2 instances.if your storage is filled thats all you get within your plan. stores data in a single availability zone or data centre. you can have the same EBS volume attached to multiple instances, this is called EBS multi attach. here are the best use cases for ebs:
+Ec2 instance storage - if you delete the the ec2 instance then the ec2  storage for that instance is also deleted which is why this called ephemeral storage, the life cycle of the data is tied to the lifecycle of the instance. ideal for hadoop clusters. his is preconfigured storage that exists on the same physical server that hosts the EC2 instance and cannot be detached from Amazon EC2. You can think of it as a built-in drive for your EC2 instance.
 
+amazon elastic block store -  ebs volumes only work through ec2 instances, id your instance is stopped or terminated or there is an accident or crash, your data is saved in a snapshot. ebs allows you to take snapshots or backups of your data and is used for data that is good for storage in blocks like video files thats need to be edited from the cloud so that the entire video file doesnt need to be uploaded like an s3 storage class everytime a write is done. solid state by default with hdd options, sizes up to 16TiB. you need ot be in the same availability zone or datacenter to attach ec2 instances.if your storage is filled thats all you get within your plan. stores data in a single availability zone or data centre. you can have the same EBS volume attached to multiple instances, this is called EBS multi attach. here are the best use cases for ebs:
 
 Operating systems: Boot and root volumes can be used to store an operating system. The root device for an instance launched from an Amazon Machine Image (AMI) is typically an EBS volume. These are commonly referred to as EBS-backed AMIs.
 
@@ -279,35 +398,81 @@ Big data analytics engingines: Amazon EBS offers data persistence, dynamic perfo
 
 ebs snapshot - is an incremental backup which means the first backup copies all data on disc while other increments only backup new data which is different to a full backup. stored in multiple availability zones.
 
-amazon s3 - or amazon simple storage service is a data store for an unlimited amount of data,is an object level storage, stores objects in buckets, a file is stored as an object max 5 tb in size. objects can be versioned like in github and you can give permissions to each object. you can create multiple buckets. web enabled, regionally distributed, big cost saving compared to ebs, serverless, write once read many. see s3 storage pricing here: https://aws.amazon.com/s3/pricing/
+amazon s3 - or amazon simple storage service is a data store for an unlimited amount of data,is an object level storage, stores objects in buckets, buckets havea flat structure so there is no heirarchy or subfolders in a bucket however by using prefixes and delimeters eg. bucket1/cats/folder1 in an object key name, the Amazon S3 console and the AWS SDKs are able to infer hierarchy and introduce the concept of folders.  a file is stored as an object max 5 tb in size, is a standalone storage not tied to compute. objects can be versioned like in github and you can give permissions to each object. you can create multiple buckets. web enabled, regionally distributed, big cost saving compared to ebs, serverless, write once read many. see s3 storage pricing here: https://aws.amazon.com/s3/pricing/.
 
-storage classes:
+Amazon s3 use cases:
+
+Backup and storage - Amazon S3 is a natural place to back up files because it is highly redundant. As mentioned in the last lesson, AWS stores your EBS snapshots in Amazon S3 to take advantage of its high availability.
+
+Media hosting - Because you can store unlimited objects, and each individual object can be up to 5 TB, Amazon S3 is an ideal location to host video, photo, and music uploads.
+
+Software delivery - You can use Amazon S3 to host your software applications that customers can download
+
+Data lakes - Amazon S3 is an optimal foundation for a data lake because of its virtually unlimited scalability. You can increase storage from gigabytes to petabytes of content, paying only for what you use.
+
+Static websites - You can configure your S3 bucket to host a static website of HTML, CSS, and client-side scripts.
+
+Static content - Because of the limitless scaling, the support for large files, and the fact that you can access any object over the web at any time, Amazon S3 is the perfect place to store static content.
+
+
+Making an S3 bucket :
+---------------------------------------------------------------------------------------------------------------------------
+
+When making an s3 bucket name it has to be reachable over http and https so there can be any special characters or spaces etc. the bucket will be accessible with a url. Each bucket name must be completely unique to any other across all aws accounts in all aws regions within a partition, a partition is a grouping of regions, there are 3 partitions in aws including standard regions, china regions and aws gov cloud US. here are some rules for naming buckets in case you want to automate the process:
+
+    Bucket names must be between 3 (min) and 63 (max) characters long.
+    Bucket names can consist only of lowercase letters, numbers, dots (.), and hyphens (-).
+    Bucket names must begin and end with a letter or number.
+    Buckets must not be formatted as an IP address.
+    A bucket name cannot be used by another AWS account in the same partition until the bucket is delete
+
+buckets use a key signed by the key management service which costs money, dont make a bucket unless youre going to use it because just having a key for the bucket incurs charges. the s3 bucket by default can only be accessed by the creator of the bucket it is a private resource. 
+
+To make a private bucket publically accessible by everyone on the internet:  you need to edit the "block public access" option in permissions, then you nneed to edit object ownership and click "ACLs enabled" which turns off the bucket access policy and enables ACLs anf their associated permissions to take their place. next in the object tab you need to select "make public using ACL" in the actions drop down, can only be done if you have objects in your bucket. to make access to your bucket more granular and less absolute you can use IAM policies which are useful for when you have alot of buckets with differrent permission requirements or you want all policies to be managed ina central location or you can use Bucket policies which are individual policies for single buckets, good for individual small scale use, both are defined in JSON format
+
+having a single bucket for multiple ec2 instances: after a bucket has been made go to instances in ec2 console, check the instance you want to use then select actions, image and templates, launch more like this, make sure auto assign public IP is enabled in network settings and then finally go to advanced menu and in user data box add the bucket name, then launch an instance the same as the checked one. 
+
+s3 storage classes:
+----------------------------------------------------------------------------------------------------------------------------
 
 s3 standard - buckets stored on this storage class have a 99.99999999999% chance of durability for 1 year. 11 nines durability. stored in at least 3 facilities all amazon s3 services use object type storage
 
 static website hosting - putting all static website assets into a bucket and connecting them to a url which can be publically accesssed.
 
-s3 standard ia - standard infrequent access - used for data that accessed less freqeuntly but requires rapid access when needed, good for storing back up files or long term storage files.
+s3 standard infrequent access - standard infrequent access - used for data that accessed less freqeuntly but requires rapid access when needed, good for storing back up files or long term storage files.
 
-s3 glacier flexible retrieval - retain data for several years for auditing processes this data does not need to be retrieved rapidly, data is stored in vaults and populated with archives. vaults can be given a lock policy not allowing it to be opened for several years. has write once read many (WORM) capability, lock policy can not be changed.
+s3 glacier flexible retrieval - retain data for several years for auditing processes this data does not need to be retrieved rapidly, data is stored in vaults and populated with archives. vaults can be given a lock policy not allowing it to be opened for several years. has write once read many (WORM) capability, lock policy can not be changed. for data accessed 1 or 2 times a year
 
-s3 lifecycle policies - allows you to move data automatically between the above tiers for periods of days eg from glacier to standard form 90 days etc.
+s3 lifecycle policies - allows you to move data automatically between the above tiers for periods of days eg from glacier to standard form 90 days etc.use cases for lifecycle include: Periodic logs: If you upload periodic logs to a bucket, your application might need them for a week or a month. After that, you might want to delete them. Data that changes in access frequency: Some documents are frequently accessed for a limited period of time. After that, they are infrequently accessed. At some point, you might not need real-time access to them. But your organization or regulations might require you to archive them for a specific period. After that, you can delete them.
 
 s3 glacier instant retrieval - for archived data that needs immediate access, but is rarely accessed. 
 
 s3 one zone infrequent access - stores data on a single availability zone, lower storage price than s3 standard ia, which uses 3 zones. is less safe and shouldnt be used for valuable un replicable data.
 
-s3 deep archive - able to retrieve objects within 12-48 hours, lowest cost storage class ideal for archiving, designed to store data for 7 to 10 years, can only be accessed once or twice a year.  
+s3 Glacier deep archive - able to retrieve objects within 12-48 hours, lowest cost storage class ideal for archiving, designed to store data for 7 to 10 years, can only be accessed once or twice a year.  
 
-s3 outposts - creates s3 buckets on amazon s3 outposts. delivers object storage to your on premises aws outpost 
+s3 outposts - creates s3 buckets on amazon s3 outposts. delivers object storage to your on premises aws outpost, For workloads that require satisfying local data residency requirements or need to keep data close to on premises applications for performance reasons 
 
 s3 intelligent tiering - for data with changing access patterns, requires a small monthly monitoring and automation fee per object. monitors your data usage and places it into an s3 tier for you and will change it based on usage. Moves objects between a frequent access tier (s3 standard) and an infrequent access tier (s3 standard IA), can also actually monitor object access patterns
 
-elastic file system EFS - is a linux file system, can be accessed from anywhere in the region, data storage automatically is scaled up in size when used without disrupting applications. is a form of file storage compared to block storage. Ideal for cases where a large number of services and resources need access to the same data at the same time, you can have efs configured for one zone or multiple zones 
+elastic file system EFS - is a linux file system, can be accessed from anywhere in the region, data storage automatically is scaled up in size when used without disrupting applications. is a form of file storage compared to block storage. Ideal for cases where a large number of services and resources need access to the same data at the same time, you can have efs configured for one zone or multiple zones, is preconfigured storage that exists on the same physical server that hosts the EC2 instance and cannot be detached from Amazon EC2. You can think of it as a built-in drive for your EC2 instance, is the only cloud-native shared file system with fully automatic lifecycle management. Tens, hundreds, or even thousands of compute instances can access an Amazon EFS file system at the same time
   
 Amazon fsx - fully managed service, choose between 4 widely used file systems: NetApp ONTAP, OpenZFS, Window File Server and Lustre
 
----------------------------------------------------------------------------------
+Amazon s3 versioning - Amazon S3 identifies objects in part by using the object name. For example, when you upload an employee photo to Amazon S3, you might name the object employee.jpg and store it in a bucket called employees. Without Amazon S3 versioning, every time you upload an object called employee.jpg to the employees bucket, it will overwrite the original object. To counteract these issues, you can use Amazon S3 versioning. Versioning keeps multiple versions of a single object in the same bucket. This preserves old versions of an object without using different names, which helps with object recovery from accidental deletions, accidental overwrites, or application failures.Deleting an object does not remove the object permanently. Instead, Amazon S3 puts a marker on the object that shows that you tried to delete it. If you want to restore the object, you can remove the marker and the object is reinstated. If you overwrite an object, it results in a new object version in the bucket. You still have access to previous versions of the object.
+
+Versioning states - Buckets can be in one of three states. The versioning state applies to all objects in the bucket. Storage costs are incurred for all objects in your bucket, including all versions. To reduce your Amazon S3 bill, you might want to delete previous versions of your objects when they are no longer needed. here are the version categories:
+
+Unversioned: No new and existing objects in n the bucket have a version.
+
+Verioning enabled:  Versioning is enabled for all objects in the bucket. After you version-enable a bucket, it can never return to an unversioned state. However, you can suspend versioning on that bucket.
+
+Versioning suspended: Versioning is suspended for new objects. All new objects in the bucket will not have a version. However, all existing objects keep their object versions.
+
+databases
+=============================================================================================================================
+
+Database types - 
 
 Ledger database: for systems of record, supply chain , registration, banking transactions use amazon ledger database service QLDB
 
@@ -331,24 +496,65 @@ In memory database:
 
 for caching, session management, gaming leaderboards, geospatial applciations use Amazon elasticache, Amazon memory DB for Redis
 
-Key Value database:
+Key Value database: for high traffic webb applictions, e-commerce systems, gaming applications use Amazon Dynamo DB.
 
-for high traffic webb applictions, e-commerce systems, gaming applications use Amazon Dynamo DB.
-
-relational databases: 
+relational databases: A relational database organizes data into tables. Data in one table can link to data in other tables to create relationships—hence, the relational part of the name. A table stores data in rows and columns. A row, often called a record, contains all information about a specific entry. Columns describe attributes of an entry. The tables, rows, columns, and relationships between them is called a logical schema. With relational databases, a schema is fixed. After the database is operational, it becomes difficult to change the schema. Because of this, most of the data modeling is done up front before the database is active.  
 
 used in traditional applications, including enterprise resource planning ERP, customer relationship management CRM and e-commerce. AWS service of use in this case include amazon aurora, RDS, Redshift. Amazon rds is compatible with multiple engines, can be launched in multiple AZ configuration to be deployed for high availability HA.
 
 use SQL to store query data, amazon rds service enables relational databases to be run in the cloud. amazon rds provisions hardware, db setup, patching and backups.
 as well as customer ownership of schema and ownership of data
 
-amazon rds supported db engines: amazon aurora, postgre sql, mysql, mariaDB, oracle, microsoft sql server 
+relational database management system or RDBMS: used to create, update, and administer a relational database. Some common examples of RDBMSs include the following:
+
+    MySQL
+    PostgresQL
+    Oracle
+    Microsoft SQL Server
+    Amazon Aurora
+
+You communicate with an RDBMS by using structured query language (SQL) queries such as SELECT*FROM table_name. 
+This query selects all the data from a particular table. However, the power of SQL queries is in creating more complex queries that pull data from several tables to identify patterns and answers to business problems. For example, querying the sales table and the books table together to see sales in relation to an author’s books. Querying tables together to better understand their relationships is made possible by a "join". Relational databases ensure that your data has high integrity and adheres to the atomicity, consistency, isolation, and durability (ACID) principle. some common use casesfor rdbms include:
+
+Applications that have a fied schema:  These are applications that have a fixed schema and don't change often. An example is a lift-and-shift application that lifts an app from on-premises and shifts it to the cloud, with little or no modifications.
+
+Applications that need fixed storage:  These are applications that need persistent storage and follow the ACID principle, such as:
+
+    Enterprise resource planning (ERP) applications
+    Customer relationship management (CRM) applications
+    Commerce and financial applications
+
+managed vs unmanaged databases: where amazon takes care of  the following: Os installation, server maintenance, rack and stack, power, HVAC and net as well all costs and insurance involved with securing and maintaining physical hardware and OS. most other things including App optimization, scaling, high availability, db backups, DB software patches, db software installs and OS patches are up to you!
+
+amazon rds: with rds you can scale components of the service meaning you can increase or decrease specific db configurations independently. Amazon RDS is a managed database service customers can use to create and manage relational databases in the cloud without the operational burden of traditional database management amazon rds supported db engines: amazon aurora, postgre sql, mysql, mariaDB, oracle, microsoft sql server. RDS uses EBS for storage and has 3 storage types: General Purpose SSD (also called gp2 and gp3), Provisioned IOPS SSD (also called io1) for high levels of IO, and Magnetic (also called standard) for backward compatibility. They differ in performance characteristics and price. charges oer hour of runtime 
+
+With rds auto backups are turned by default and should be setup to backup during times of low activity backups are retained for up to 35 days, setting this to 0 means no backups are done and also all existing backups are deleted. manual snapshots are also an option and can be kept for longer than 35 days
+
+rds multi az - In an Amazon RDS Multi-AZ deployment, Amazon RDS creates a redundant copy of your database in another Availability Zone. You end up with two copies of your database—a primary copy in a subnet in one Availability Zone and a standby copy in a subnet in a second Availability Zone. The primary copy of your database provides access to your data so that applications can query and display the information. The data in the primary copy is synchronously replicated to the standby copy. The standby copy is not considered an active database, and it does not get queried by applications. All done to improva availability. To help ensure that you don't lose Multi-AZ configuration, there are two ways you can create a new standby database. They are as follows:
+
+    Demote the previous primary to standby if it's still up and running.
+    Stand up a new standby DB instance.
+
+The reason you can select multiple subnets for an Amazon RDS database is because of the Multi-AZ configuration. You will want to ensure that you have subnets in different Availability Zones for your primary and standby copies.
+
+amazon rds security - Use IAM policies to assign permissions that determine who can manage Amazon RDS resources. For example, you can use IAM to determine who can create, describe, modify, and delete DB instances, tag resources, or modify security groups. Use security groups to control which IP addresses or Amazon EC2 instances can connect to your databases on a DB instance. When you first create a DB instance, all database access is prevented except through rules specified by an associated security group. Use Amazon RDS encryption to secure your DB instances and snapshots at rest. Use Secure Sockets Layer (SSL) or Transport Layer Security (TLS) connections with DB instances running the MySQL, MariaDB, PostgreSQL, Oracle, or SQL Server database engines. 
 
 amazon aurora - compatible with mysql and postgre sql and is 5 times faster than standard mysql dbs. amazon aurora is an enterprise class relational database.replicates 6 copies of your data to 3 data centers and continuosly baks up to amazon s3, performs at 1/10th cost of regulat dbs. 
 
 non relational database:
 
-dynamo db - a key value database service, serverless database meaning it doesnt require any management of physical resources or instances. is redundant across multiple datacentres. is non relatioal meaning it doesnt use sql tables to store data. sql databases are usually quite rigid and hard to scale because of all the relations in the db but non relational dbs which have much faster query times, attributes within a dynamo db table can be removed and changed unlike sql dbs. uses key value pairs aka items and pairs which can be removed or added anytime, can scale up to 10 trillion requests per day,is great for single table databases
+dynamo db - made up of standalone tables instead of relational tables, fully managed, data stred on ssd,  a key value database service, serverless database meaning it doesnt require any management of physical resources or instances. is redundant across multiple datacentres. is non relational meaning it doesnt use sql tables to store data. sql databases are usually quite rigid and hard to scale because of all the relations in the db but non relational dbs which have much faster query times, attributes within a dynamo db table can be removed and changed unlike sql dbs. uses key value pairs aka items and pairs which can be removed or added anytime, can scale up to 10 trillion requests per day,is great for single table databases, tight integration with infrastructure as code IAC. has become the db of choice for high scale applications and serverless applications, works well with online transaction processing OLTP
+
+Dynamo db is made of 3 core attributes tables: Similar to other database systems, DynamoDB stores data in tables. A table is a collection of data. For example, you can have a table called Person that you can use to store personal contact information about friends, family, or anyone else of interest. You can also have a Cars table to store information about vehicles that people drive., items: Each table contains zero or more items. An item is a group of attributes that is uniquely identifiable among all the other items. In a Person table, each item represents a person. In a Cars table, each item represents one vehicle. Items in DynamoDB are similar in many ways to rows, records, or tuples in other database systems. In DynamoDB, there is no limit to the number of items you can store in a table, attributes: Each item is composed of one or more attributes. An attribute is a fundamental data element, something that does not need to be broken down any further. For example, an item in a Person table might contain attributes called PersonID, LastName, FirstName, and so on. In a Department table, an item might have attributes such as DepartmentID, Name, Manager, and so on. Attributes in DynamoDB are similar in many ways to fields or columns in other database systems. use cases for dynamo db include:
+
+You are experiencing scalability problems with other traditional database systems.
+You are actively engaged in developing an application or service.
+You are working with an OLTP workload.
+You care deploying a mission-critical application that must be highly available at all times without manual intervention.
+You require a high level of data durability, regardless of your backup-and-restore strategy.
+create media metadata stores, software devbelopment, scale gaming platforms, deliber seamless retail experiences
+
+Dynamo db security features are much the same as every other storage offering including encryption at rest, AWS KMS, redundant storage across multiple AZ,IAM management, aws global network security procedures
 
 data warehouses:
 
@@ -360,17 +566,25 @@ amazon database migration service (adms) - allows source database to remain full
 
 other databases;
 
-Amazon document db -  has mongo db compatibility is useful for content management, catalogs, user profiles.
+Amazon document db -  has mongo db compatibility is useful for content management, catalogs, user profiles. A document database is a type of NoSQL database you can use to store and query rich documents in your application. These types of databases work well for the following use cases: content management systems, profile management, and web and mobile applications. Amazon DocumentDB has API compatibility with MongoDB. This means you can use popular open-source libraries to interact with Amazon DocumentDB, or you can migrate existing databases to Amazon DocumentDB with minimal hassle.
 
-amazon neptune - a graph db engineered for social networking, recommendation engines and fraud detection, knowledge graphs.
+amazon neptune - a graph db engineered for social networking, recommendation engines and fraud detection, knowledge graphs. A graph database is a good choice for highly connected data with a rich variety of relationships.
 
 amazon managed block chain - good for supply chain tracking, banking and financial records that require 100% immutability, crypto. blockchain is a distributed ledger system that lets multiple parties run transactions and share data without a central authority.
 
 amazon quantum ledger db ( QLDB ) - good for the above use cases and is regarded as an immutable system of record thay can never be removed for audits
 
+amazon keyspaces:  scalable, highly available, and managed Apache Cassandra compatible database service. Amazon Keyspaces is a good option for high-volume applications with straightforward access patterns. With Amazon Keyspaces, you can run your Cassandra workloads on AWS using the same Cassandra Query Language (CQL) code, Apache 2.0 licensed drivers, and tools that you use today.
+
+amazon timestream: Timestream is a fast, scalable, and serverless time series database service for Internet of Things (IoT) and operational applications. It makes it easy to store and analyze trillions of events per day up to 1,000 times faster and for as little as one-tenth of the cost of relational databases. Time series data is a sequence of data points recorded over a time interval. It is used for measuring events that change over time, such as stock prices over time or temperature measurements over time.
+
+amazon quantam ledger database qldb: With traditional databases, you can overwrite or delete data, so developers use techniques, such as audit tables and audit trails to help track data lineage. These approaches can be difficult to scale and put the burden of ensuring that all data is recorded on the application developer. Amazon QLDB is a purpose-built ledger database that provides a complete and cryptographically verifiable history of all changes made to your application data.
+
 database accelerators:
 
-amazon elasticache: can increase the caching of your db system to reduce read times, comes in memcache D and redis flavours.
+amazon elasticache: can increase the caching of your db system to reduce read times, comes in memcache D and redis flavours. You aren’t responsible for instance failovers, backups and restores, or software upgrades.
+
+amazon memorydb for redis: MemoryDB is a Redis-compatible, durable, in-memory database service that delivers ultra-fast performance. With MemoryDB, you can achieve microsecond read latency, single-digit millisecond write latency, high throughput, and Multi-AZ durability for modern applications, like those built with microservices architectures. You can use MemoryDB as a fully managed, primary database to build high-performance applications. You do not need to separately manage a cache, durable database, or the required underlying infrastructure.
 
 Amazon dynamo db accelerator - caching performance options for dynamo db
 
@@ -391,6 +605,8 @@ FIDO security keys: FIDO-certified hardware security keys are provided by third-
 user permissions and access - aws account owner is also the root user who has supreme access of everything. A user should be created immediately to perform most tasks. Only access root user for a limited number of tasks like changing root user email and changing aws support plan. for example a bad actor can steal your root user permissions and transform your account into a crypto miner. Multi factor auth should be enabled to mitigate this possibility. 
 
 aws id and access management - where you create IAM users and give them permissions. all actions are denied by default and need to be explicitly given access to each user, called the principle of least privilege. IAM policy is described in a JSONfile. IAM groups allow to distribute the same priviliges to a large number of people and each group can have different permissions. roles give a different set of permissions to a user based on the tasks that are performed on that day or the job role they have, used for temporary tasks, sheds previous permissions for the role permissions, is good for employees who rotate through different tasks each day, role priviliges usuallu expire within a time period of 15 minutes to 36 hours. IAM also handles multi factor authentication. Every user should be given an individual account and accounts should not be shared this increases security types of MFA multi factor authentication. IDP or identity providers is a way to manage employee identity information on a large scale eg. 300 + employees. IDP services in AWS include IAM identity center or 3rd party identity providers which stops you from creating separate IAM users for each user in AWS instead you can asswign an IAM role to provide permission to identities that are federated from your idp.
+
+IAM role can be used to authenticate users in the corporate network without signing in
 
 IAM policy examples
 
@@ -489,10 +705,56 @@ amazon guard duty - provides intelligent threat detection for aws infrastructure
 Monitoring
 ================================================================================== 
 
+Metrics - Each individual data point that a resource creates is a metric. Think of a metric as a variable to monitor and the data points as representing the values of that variable over time. Every metric data point must be associated with a timestamp. 
+
+Metrics in amazon s3 include: 
+
+Size of objects stored in a bucket
+Number of objects stored in a bucket
+Number of HTTP request made to a bucket
+
+Amazon relational database metrics include:
+
+    Database connections
+    CPU utilization of an instance
+    Disk space consumption
+
+Amazon ec2 metrics include:
+
+    CPU utilization
+    Network utilization
+    Disk performance
+    Status checks
+
+request latency
+error response rate 
+
+If you want to gain more granular visibility, you can use high-resolution custom metrics, which make it possible for you to collect custom metrics down to a 1-second resolution. This means you can send 1 data point per second per custom metric.
+
+Some examples of custom metrics include the following:
+
+Webpage load times
+Request error rates
+Number of processes or threads on your instance
+Amount of work performed by your application
+
+benefits of monitoring include responding proactively to problems before they become endemic, waiting for end users to let you knwo when your application is experiencing an outage is a bad practice. Imrpoving the reliability of your resources, monitoring can illuminate bottlenecks and inefficient architectures. recognize security threats by establishing a baseline of normal network atctivity so that when there are spikes in activity or unusual IP addresses accessing resources you can jump on them. you cna make data driven decisions by collecting app level data viewing the number of users who use new features of the app with this kowledge you will know how to improve the feature. monitoring can also help you make more cost effective solutions by re utilizing underused resources.  
+
 Amazon cloudwatch - enables you to monitor and manage various metrics and and configure alarms based on data from those metrics, cloudwatch can also automatically create graphs to show how these metrics have performed over time. Cloudwatch alarms when set can also automatically perform actions if the value has gone above or below a predefined threshold. for example you can configure your ec2 instances to shutdown if the cpu hasnt been utilized for a certain amount of time, thus saving you money, alarms can also send notifications by sms or email or whatever else.the cloudwatch dashboard is customizable and able to show you all kinds of metrics over time. monitors your resource utilization and performance.
 
-Amazon cloudtrail - records API calls for your account, recorded information includes api caller identity, time of call, source ip address of caller. this is a log that records the who, how, when, where of an api caller, everything except the why?. recall that api calls are used to do everything in aws including provisioning, managing and configuring your aws resources. cloud trail allows you to review a complete history of this activity, updated within 15 minutes of api call being made.cloud trail insights is an optional feature that can automatically detect unusual api activities in your account, for example insights might detect that a higher number of ec2 instances have been launched than what is normal and it will alert you
+cloudwatch costs money ! - Many AWS services automatically send metrics to CloudWatch for free at a rate of 1 data point per metric per 5-minute interval. This is called basic monitoring, and it gives you visibility into your systems without any extra cost. For many applications, basic monitoring is adequate. For applications running on EC2 instances, you can get more granularity by posting metrics every minute instead of every 5-minutes using a feature like detailed monitoring. Detailed monitoring incurs a fee. For more information about pricing, see "Amazon CloudWatch Pricing" in the Resources section at the end of this lesson.
 
+AWS services that send data to CloudWatch attach dimensions to each metric. A dimension is a name and value pair that is part of the metric’s identity. You can use dimensions to filter the results that CloudWatch returns. For example, many Amazon EC2 metrics publish InstanceId as a dimension name and the actual instance ID as the value for that dimension.
+Screenshot depicting the metrics and dimensions used to filter the results that CloudWatch returns. By default, many AWS services provide metrics at no charge for resources such as EC2 instances, Amazon Elastic Block Store (Amazon EBS) volumes, and Amazon RDS database (DB) instances. For a charge, you can activate features such as detailed monitoring or publishing your own application metrics on resources such as your EC2 instances. 
+
+cloudwatch dashboard - CloudWatch aggregates statistics according to the period of time that you specify when creating your graph or requesting your metrics. You can also choose whether your metric widgets display live data. Live data is data published within the last minute that has not been fully aggregated. You are not bound to using CloudWatch exclusively for all your visualization needs. You can use external or custom tools to ingest and analyze CloudWatch metrics using the GetMetricData API.
+
+cloudwatch logs - With CloudWatch Logs, you can query and filter your log data. For example, suppose you’re looking into an application logic error for your application. You know that when this error occurs, it will log the stack trace. Because you know it logs the error, you query your logs in CloudWatch Logs to find the stack trace. You also set up metric filters on logs, which turn log data into numerical CloudWatch metrics that you can graph and use on your dashboards.
+Some services, like Lambda, are set up to send log data to CloudWatch Logs with minimal effort. With Lambda, all you need to do is give the Lambda function the correct IAM permissions to post logs to CloudWatch Logs. Other services require more configuration. For example, to send your application logs from an EC2 instance into CloudWatch Logs, you need to install and configure the CloudWatch Logs agent on the EC2 instance. With the CloudWatch Logs agent, EC2 instances can automatically send log data to CloudWatch Logs. cloudwatch groups are groups of streams, cloudwatch streams are streams of events, cloudwatch events are records of activity recorded by the application or resource being monitored. It has a timestamp and an event message.
+
+cloudwatch alarms - setup to notify you when your infrastructure is having capacity, performance or availability issues. an alarm can be triggered when it transitions from one fo the following states to another aftr an alarm is triggered it can initiate an action eg notifiy through SNS. Alarm states are "OK" where operations are within alarm threshold, "alarm" where operations are outside of defined threshold and "insufficient_data" where the alarm has only just started.
+
+Amazon cloudtrail - records API calls for your account, recorded information includes api caller identity, time of call, source ip address of caller. this is a log that records the who, how, when, where of an api caller, everything except the why?. recall that api calls are used to do everything in aws including provisioning, managing and configuring your aws resources. cloud trail allows you to review a complete history of this activity, updated within 15 minutes of api call being made.cloud trail insights is an optional feature that can automatically detect unusual api activities in your account, for example insights might detect that a higher number of ec2 instances have been launched than what is normal and it will alert you
 
 AWS trusted advisor - inspects your aws environment and provides real time recommendations according to aws best practices across 5 categories: cost, optimization , performance: eg. provides recommendations for how to take advantage of provisioned throughput, security, fault tolerance and service limits. It will do this by issuing green, orange and red checks across these 5 categories, green means no problem detected, orange means that some investigations are recommended and a red circle means actions need to be performed immediately to illeviate poor performance, functionality or efficiency in any of the categories, can for example review security of your amazon s3 buckets by checking for open access permissions
 
@@ -704,3 +966,24 @@ Virtual machines: easiest to setup, emulates a physical server and allows instal
 
 Servers: the first building block you need to host an application. Srevers usually handle HTTP requests and send responses following the client server model. ALthough any API based communication also falls under this model. Common HTTP servers include:
 Windows options, suc as internet information sewrvice IIS and Linux options such as Apache HTTP server, Nginx, and Apache Tomcat.
+
+=================================================================================================Availability
+
+The availability of a system is typically expressed as a percentage of uptime in a given year or as a number of nines. In the following table is a list of availability percentages based on the downtime per year and its notation in nines. for example 90% is one 9 of availability and a downtie of 36.53 days or 99.99% availbility is four 9's of availability and 52.60 minutes of downtime and so on.
+
+To increase availability, you need redundancy. This typically means more infrastructure—more data centers, more servers, more databases, and more replication of data. You can imagine that adding more of this infrastructure means a higher cost. Customers want the application to always be available, but you need to draw a line where adding redundancy is no longer viable in terms of revenue.
+
+the way to do this is to add instances across availability zones or to add caching and storage across availability zones, there is a section on how to do this above. However, when there is more than one instance, it brings new challenges, such as the following:
+
+Replication process – The first challenge with multiple EC2 instances is that you need to create a process to replicate the configuration files, software patches, and application across instances. The best method is to automate where you can.
+
+Customer redirection – The second challenge is how to notify the clients—the computers sending requests to your server—about the different servers. You can use various tools here. The most common is using a Domain Name System (DNS) where the client uses one record that points to the IP address of all available servers.
+However, this method isn't always used because of propagation — the time frame it takes for DNS changes to be updated across the Internet.
+
+Another option is to use a load balancer, which takes care of health checks and distributing the load across each server. Situated between the client and the server, a load balancer avoids propagation time issues. You will learn more about load balancers in the next section.
+
+Types of high availability – The last challenge to address when there is more than one server is the type of availability you need: active-passive or active-active. With an active-passive system, only one of the two instances is available at a time. One advantage of this method is that for stateful applications (where data about the client’s session is stored on the server), there won’t be any issues. This is because the customers are always sent to the server where their session is stored. A disadvantage of an active-passive system is scalability. This is where an active-active system shines. With both servers available, the second server can take some load for the application, and the entire system can take more load. However, if the application is stateful, there would be an issue if the customer’s session isn’t available on both servers. Stateless applications work better for active-active systems.
+
+================================================================================================
+
+amazon Q developer - pay to have your code stolen from you and develop your replacement
