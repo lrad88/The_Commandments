@@ -59,6 +59,7 @@ neofetch - runs neofetch
 upower --enumerate - lists laptop power sources
 upower, sensors, pwmconfig - system sensor info
 sudo sensors-detect - lm-sensors settings
+sensors - shows system sensor stats
 cat /proc/meminfo, free, vmstat, top - programs for checking memory and cpu usage
 loginctl - will show visual driver and other login stuff
 brightnessctl set 10% - set screen brightness
