@@ -271,6 +271,8 @@ when you need to sync local repo with changes made on remote repo
 git fetch - downloads all history from the remote branches of your repo
 git merge - merges the remote repo with the local repo to elimiate conflicts
 git pull - does a fetch and merge both at once
+git branch --set-upstream-to=origin/main - is needed when there is no remote for 
+the current branch or git pull doesnt work
 
 ==========================================================================================
 sqlite3 commands
