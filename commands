@@ -311,4 +311,12 @@ Jupyterlabs
 # DD to delete a cell when outside of it only
 # CC and V to copy and paste a cell when outside of it only
 
+==================================================================================================
+FFmpeg
+
+# man ffmpeg - manual
+# -h to get full help on any command
+
+
+
 token: stored in coding resources. 
