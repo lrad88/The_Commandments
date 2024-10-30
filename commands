@@ -70,6 +70,7 @@ amixer set 'Master' 10% - puts volume to 10%
 uname -r - check version of os                                
 echo XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
 sudo shutdown -h +45
+sudo killall shutdown - cancel shutdown timer
 poweroff - shutdown safely   
 btop, top, htop - system monitors
 lspci, glxinfo, lshw - chipset info
