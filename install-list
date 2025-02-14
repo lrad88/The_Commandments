@@ -116,4 +116,4 @@ sudo dnf system-upgrade download --releasever=41
 
 sudo dnf group install python classroom
 
-udo dnf group install python science
+sudo dnf group install python science
