@@ -7,7 +7,7 @@ sudo dnf install kitty
 
 vim
 
-libXinerama devel
+libXinerama-devel
 
 libXext
 
@@ -26,7 +26,9 @@ dmenu
 
 st
 
-libXft devel
+libXft-develi
+
+xrandr
 
 make gcc
 
@@ -105,3 +107,13 @@ sqlitebrowser
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 
 liberation-fonts
+
+sudo dnf -y install gdisk
+
+sudo dnf install dnf-pllugin-system-upgrade
+
+sudo dnf system-upgrade download --releasever=41
+
+sudo dnf group install python classroom
+
+udo dnf group install python science
