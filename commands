@@ -90,8 +90,13 @@ uname -r - check version of os
 uname -a - check kernel version
 echo $XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
 sudo shutdown -h +45
+<<<<<<< HEAD
 poweroff - shutdown safely  
 systemctl reboot 
+=======
+sudo killall shutdown - cancel shutdown timer
+poweroff - shutdown safely   
+>>>>>>> 40510a1c0d80bfc93845ecf0cbe9f86f6466f76b
 btop, top, htop - system monitors
 lspci, glxinfo, lshw - chipset info
 
@@ -306,6 +311,8 @@ when you need to sync local repo with changes made on remote repo
 git fetch - downloads all history from the remote branches of your repo
 git merge - merges the remote repo with the local repo to elimiate conflicts
 git pull - does a fetch and merge both at once
+git branch --set-upstream-to=origin/main - is needed when there is no remote for 
+the current branch or git pull doesnt work
 
 ==========================================================================================
 sqlite3 commands
@@ -343,5 +350,13 @@ Jupyterlabs
 # option + enter executes the current cell and creates a new one
 # DD to delete a cell when outside of it only
 # CC and V to copy and paste a cell when outside of it only
+
+==================================================================================================
+FFmpeg
+
+# man ffmpeg - manual
+# -h to get full help on any command
+
+
 
 token: stored in coding resources. 
