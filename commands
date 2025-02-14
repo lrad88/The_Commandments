@@ -29,6 +29,12 @@ startx - starts an x11 session into dwm
 tar -ztvf [archive name] - list contents of tar file
 tar -xvzf [archive name] - unzip in current folder
 rpm -qa| grep ffmpeg - gives information on ffmpeg
+su -l - logs you in as root user, ctrl d logs you out or 'exit' 
+sudo dnf group list - lists all downladable and installed desktop environments
+dnf group info "python-classroom" - gives all packages and info for this group
+sudo dnf group install "python-classroom" - installs group
+sudo dnf upgrade --refresh - updates all programs on your system
+modinfo -F version nvidia -- gives you nvidia version or other program versions
 
 FILE MANIPULATION
 ----------------------------------------------------------------------------------------------------
@@ -37,13 +43,14 @@ mv "old name.txt" "new name.txt" - rename a file
 du -sh directory_name - tells size of a directory
 rm *.wfp - removes all files of .wfp file type
 realpath "filename" - gives you the full path of folder
-ls or dir -a - lists hidden files within a folder
+ls or dir -a, or ll - lists hidden files within a folder
 ctrl shift c, v - copy paste
 sudo bash -c "ls -al /root" - list all folders in root
 rm -r (file) - removes a folder and all its files
 mv intro manual/chap1 - moves intro file to ...
 mkdir - makes a file in current folder
 dir - list all files in current directory
+ls -l - gives ownership and permissions info
 
 SCRIPTING  
 ----------------------------------------------------------------------------------------------------  
@@ -54,6 +61,14 @@ chmod +rwx hello_world.sh - adds read write execute to file
 
 SYSTEM CONFIG
 ---------------------------------------------------------------------------------------------------
+
+fwupd - checks for latest firmware updates
+fwupdmgr get-devices  -  shows more details 
+
+sudo dnf group list - shows a whole bunch of packages to install as groups
+sudo dnf group info - gives info on group and installed files
+sudo dnf group list --hidden - shows groups that are not fully verified or partial
+dnf list *nvidia* shows the entire dnf download library with *nvidia in it
 
 neofetch - runs neofetch   
 upower --enumerate - lists laptop power sources
@@ -66,13 +81,21 @@ brightnessctl set 10% - set screen brightness
 brightnessctl -l - lists all physical devices with leds
 brightnessctl --device='kbd_backlight' set 3 - sets kbd backlight                                                         
 picom &, picom -b - enables default compositing, autostart as bg process  
+picom -C, picom -G - disables shoadow effects 
+picom -c -enable shadow effects
+
 amixer set 'Master' 10% - puts volume to 10%                    
+wpctl inspect 43 - for pipewire
 uname -r - check version of os                                
-echo XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
+uname -a - check kernel version
+echo $XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
 sudo shutdown -h +45
-poweroff - shutdown safely   
+poweroff - shutdown safely  
+systemctl reboot 
 btop, top, htop - system monitors
 lspci, glxinfo, lshw - chipset info
+
+xterm -display
 
 sudo fdisk -l - lists all drives on system
 sudo umount -l -f /dev/sdb1 - unmount a disk, -lazy and -forced unmount
@@ -80,10 +103,19 @@ sudo mkfs.vfat, ntfs, ext4 /dev/sdb1 - format disk to vfat, ntfs, ext4
 fdisk dev/sda - gives details on selected disk
 mkdir /media/usb-drive - directory made for mounted usb
 mount /dev/sda1 /media/usb-drive/ - mounts usb to usb-drive directory
-
+lsusb, lsblk - basic command for listing usb devices
+usb-devices - better command for listing usb devices 
+dmesg -w - enter this command and then input a usb and you will get a log of all occurences in the kernel including the usb issues 
+fsck /dev/[device_name] - verifies number of files and clusters in a drivblk
 ----------------------------------------------------------------------------------------------------
 
 NETWORK
+
+nm-online - actualluy checks if youre online
+lspci - lists all pci devices
+lspci -k - lists pci devices and kernel drivers
+lspci | grep -i intel  will bring up all pci devices that are intel on your system
+lshw -C network - shows all network devices known by your system
 
 nmcli dev status - check status of nw devices
 nmcli radio wifi - check wifi device enabled 
@@ -95,6 +127,9 @@ sudo nmcli --ask dev wifi connect "ssid" - connect to a wifi
 sudo nmcli dev wifi connect network-ssid password - connect with pw
 ping google - check connection
 nmcli con up "ssid" - connect without pw
+nmtui - gices a uswer interface for your network connections
+ip addr - tells you ipaddresses of your connnections
+ifconfig - shows all network connections  
 
 # netstat -tnlp | grep 2222 = check if the port is open
 # nc 127.0.0.1 2222 = connects to the ipaddress and port 2222
