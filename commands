@@ -52,7 +52,8 @@ mv intro manual/chap1 - moves intro file to ...
 mkdir - makes a file in current folder
 dir - list all files in current directory
 ls -l - gives ownership and permissions info
-
+rmdir -rf - remove a folder and all files within
+~/ - shortcut to denote home directory
 
 SCRIPTING  
 ----------------------------------------------------------------------------------------------------  
@@ -129,6 +130,9 @@ lsusb, lsblk - basic command for listing usb devices
 usb-devices - better command for listing usb devices 
 dmesg -w - enter this command and then input a usb and you will get a log of all occurences in the kernel including the usb issues 
 fsck /dev/[device_name] - verifies number of files and clusters in a drivblk
+sudo mkfs.vfat /dev/[device_name] - format usb to fat32
+sudo mkfs.ntfs /dev/[device_name] - formar usb to NTFS
+sudo mkfs.exfat /dev/[device_name] - for usb for exFAT
 
 df or df -t shows available and used disk space 
 ----------------------------------------------------------------------------------------------------
@@ -180,6 +184,7 @@ esc u - undo previous input before save, save often !
 :read !tail -20 "vim file name" - copes over the last 20 lines of a vim file over to your current file
 :read !head -20 does the samme thing as above but from the 1st 20 lines
 :73 read "vim file name" - will copy all text over from line 73 onward
+:set number, :set nonumber, set relativenumber - line numbering options in vim
 ----------------------------------------------------------------------------------------------------
 
 IMPORTANT FOLDERS
@@ -227,7 +232,7 @@ GIT COMMANDS
 git status - checks if current branch is uptodate, whether there is anything to commit, push or pull, whether files are staged unstaged or untracked, whether there are files created, modified or deleted
 git branch clean_up
 git checkout clean_up
-git push -f origin dev - push code to dev branch
+git push -f origin dev - force push to origin dev
 git reset --hard HEAD~1 - reset your code
 git clone <link> - download repo to computer
 git branch <branch name> - creates local branch -1 branch is used per developer to work in parallel
