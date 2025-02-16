@@ -1,5 +1,6 @@
 
 
+
 the commandments
 
 KITTY COMMANDS
@@ -23,7 +24,7 @@ setxbmap us - sets keyboard to us language
 setxbmap -print -verbose 10 shows current keyboard settings in detail
 sudo dnf clean dbcache - cleans dnf dbcache
 sudo dnf clean all - cleans entire dnf cache
-dnf list installed - lists all installed packages and dependencies in dnf
+dnf list --installed - lists all installed packages and dependencies in dnf
 ctrl command F1 F2 F3 - changes the tty terminal
 startx - starts an x11 session into dwm
 tar -ztvf [archive name] - list contents of tar file
@@ -52,12 +53,14 @@ mkdir - makes a file in current folder
 dir - list all files in current directory
 ls -l - gives ownership and permissions info
 
+
 SCRIPTING  
 ----------------------------------------------------------------------------------------------------  
 
 chmod u+x hello_world.sh - change permissions to execute file with ./
 chmod +rwx hello_world.sh - adds read write execute to file
 #!/usr/sh - makes a script execeutable upon startup  
+
 
 SYSTEM CONFIG
 ---------------------------------------------------------------------------------------------------
@@ -77,6 +80,14 @@ sudo sensors-detect - lm-sensors settings
 sensors - shows system sensor stats
 cat /proc/meminfo, free, vmstat, top - programs for checking memory and cpu usage
 loginctl - will show visual driver and other login stuff
+
+sudo i2cdetect -l - shows busses that contain rgb hardware
+openrgb --list-devices -0 shows all connected rgb device and number of LEDs
+openrgb --mode chase --color 690202 - gives all rgb deviced breathing mode and a color 
+
+xrandr -q | grep "connected" - show all physical video outs and which are connected
+xrandr --output HDMI-0 --brightness 0.7 - used to change brightness of hdmi screen
+xterm -display
 brightnessctl set 10% - set screen brightness
 brightnessctl -l - lists all physical devices with leds
 brightnessctl --device='kbd_backlight' set 3 - sets kbd backlight                                                         
@@ -84,23 +95,29 @@ picom &, picom -b - enables default compositing, autostart as bg process
 picom -C, picom -G - disables shoadow effects 
 picom -c -enable shadow effects
 
+pavucontrol - better gui audio control easy to use
 amixer set 'Master' 10% - puts volume to 10%                    
+man amixer - amixer manual
+amixer | less - mixer volumes and capabilities
+amixer info - gives simple audio overview
 wpctl inspect 43 - for pipewire
+amixer controls - shows all amixer controls
+aplay -l - lists all avilable audio playback devices
+speaker-test -D hw:0,3 -c2 -t wav - sends a wav to specifically the hdmi audio output on the nvidia gfx card
+alsamixer - open alsamixer
+
 uname -r - check version of os                                
 uname -a - check kernel version
 echo $XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
 sudo shutdown -h +45
-<<<<<<< HEAD
 poweroff - shutdown safely  
 systemctl reboot 
-=======
-sudo killall shutdown - cancel shutdown timer
-poweroff - shutdown safely   
->>>>>>> 40510a1c0d80bfc93845ecf0cbe9f86f6466f76b
+sudo killall shutdown - cancel shutdown timer   
 btop, top, htop - system monitors
 lspci, glxinfo, lshw - chipset info
+----------------------------------------------------------------------------------------------------
 
-xterm -display
+MEDIA DEVICES
 
 sudo fdisk -l - lists all drives on system
 sudo umount -l -f /dev/sdb1 - unmount a disk, -lazy and -forced unmount
@@ -112,6 +129,8 @@ lsusb, lsblk - basic command for listing usb devices
 usb-devices - better command for listing usb devices 
 dmesg -w - enter this command and then input a usb and you will get a log of all occurences in the kernel including the usb issues 
 fsck /dev/[device_name] - verifies number of files and clusters in a drivblk
+
+df or df -t shows available and used disk space 
 ----------------------------------------------------------------------------------------------------
 
 NETWORK
@@ -156,7 +175,11 @@ i - to insert new text
 :colorscheme space tab - change vim colorscheme
 wq! w! - force write to files
 /word enter n N - how to find word. enter then n to next
-esc u - undo previous input before save, save often ! 
+esc u - undo previous input before save, save often !
+:read "vim file name" - do this in another vim file and all text from the read file will be copied over
+:read !tail -20 "vim file name" - copes over the last 20 lines of a vim file over to your current file
+:read !head -20 does the samme thing as above but from the 1st 20 lines
+:73 read "vim file name" - will copy all text over from line 73 onward
 ----------------------------------------------------------------------------------------------------
 
 IMPORTANT FOLDERS
@@ -167,7 +190,7 @@ vim .xinitrc - folder to run programs and environment variables on startup
 cd .config/ - contains all the config files of your programs
 ~/.bashrc - bash settings
 /etc/vimrc - vim config file
-
+hidden root directory files - /var, /usr, "cd /" 
 ----------------------------------------------------------------------------------------------------
 
 DWM commands
@@ -180,7 +203,9 @@ opt J, opt K - switches active window
 shift opt c - kills active window
 opt T, opt F, opt M - tiled window fullscreen
 in floating mode = opt, rmb - resize a window
-f-----------------------------------------------------------------------------------------------
+dwmblocks - shows dwm blocks
+alt shift tab q - close dwm
+---------------------------------------------------------------------------------------------------
 
 MANUALS
 
