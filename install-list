@@ -117,3 +117,7 @@ sudo dnf system-upgrade download --releasever=41
 sudo dnf group install python classroom
 
 sudo dnf group install python science
+
+sudo dnf -y group install workstation-product-environment
+
+sudo dnf install easy effects
