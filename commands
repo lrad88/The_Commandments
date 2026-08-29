@@ -85,12 +85,14 @@ picom -C, picom -G - disables shoadow effects
 picom -c -enable shadow effects
 
 amixer set 'Master' 10% - puts volume to 10%                    
+alsamixer - visual of basic mixer
+easyeffects - boost your volume preset alot
+easy effects -q - to quit
 wpctl inspect 43 - for pipewire
 uname -r - check version of os                                
 uname -a - check kernel version
 echo $XDG_SESSION_TYPE - will show you ther visual driver you are using eg. tty, weyland, X11  
 sudo shutdown -h +45
-<<<<<<< HEAD
 poweroff - shutdown safely  
 systemctl reboot 
 =======
