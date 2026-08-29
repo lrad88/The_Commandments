@@ -257,6 +257,7 @@ git switch FixTemp - switches to FixTemp branch
 git merge -m "comment" FixTemp - merge changes made in FixTemp into current branch
 git branch -d FixTemp - deletes FixTemp branch
 git switch -c Yolo - creates a new branch called yolo and switches you into it 
+git remote -v - check your current remote URL
 
 After you have commited a version of Honey.py to 2 separate branches you can see the difference between the 2 comits by switching branches 
 --------------------------------------------------------
