@@ -50,3 +50,15 @@ firefox
 audio group installed
 btop
 git clone https://github.com/torrinfail/dwmblocks
+dnf group install vlc
+dnf group install c-development
+snapd, sudo ln -s /var/lib/snapd/snap /snap
+sudo snap install pycharm-community --classic
+
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
+
+sudo yum install code # or code-insiders
+
+
+
