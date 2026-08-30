@@ -60,5 +60,19 @@ echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com
 
 sudo yum install code # or code-insiders
 
-
+sudo dnf install discord
+ 
+flatpak install flathub me.timschneeberger.jdsp4linux
+ 
+sudo dnf copr enable arrobbins/JDSP4Linux
+ 
+sudo dnf install -y android-tools 
+ 
+sudo dnf install -y make gcc-c++ qt6-qtbase-devel qt6-qtmultimedia-devel glx-utils
+ 
+sudo dnf install -y --allowerasing gcc-c++ git make dbus-daemon ffmpeg pkgconf-pkg-config qt6-qtbase-devel qt6-qtdeclarative-devel qt6-lingu    ist protobuf-compiler protobuf-devel systemd-devel libusb1-devel
+ 
+sudo dnf install --allowerasing ./tryx-panorama-manager-*.fc*.x86_64.rpm
+ 
+sudo dnf install ffmpeg adb libusb1 qt6-qtbase qt6-qtdeclarative -y
 
