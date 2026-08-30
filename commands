@@ -16,7 +16,8 @@ LINUX COMMANDS
 firefox --new-tab --url www.google.com
 tail - open a file
 sudo dnf install pkg - install a file
-sudo -i or su or s - power user, type exit to exit power user
+sudo -i or su or s - power user
+su (user) - to go from # to back to $
 sudo passwd root - set password for root
 sudo dnf remove (program)
 sudo make clean install - install files in your current directory
@@ -36,6 +37,7 @@ dnf group info "python-classroom" - gives all packages and info for this group
 sudo dnf group install "python-classroom" - installs group
 sudo dnf upgrade --refresh - updates all programs on your system
 modinfo -F version nvidia -- gives you nvidia version or other program versions
+snap run pycharm-community
 
 FILE MANIPULATION
 ----------------------------------------------------------------------------------------------------
@@ -52,8 +54,12 @@ mv intro manual/chap1 - moves intro file to ...
 mkdir - makes a file in current folder
 dir - list all files in current directory
 ls -l - gives ownership and permissions info
+ls -lahD - gives info on rwx priviliges, date of file creation, number of files in in folder ...
 rmdir -rf - remove a folder and all files within
 ~/ - shortcut to denote home directory
+rm -rf / - remove recursive force on home directory will delete you home directory and everything else 
+chmod u+x hello_world.sh - change permissions to execute file with ./
+64 chmod +rwx hello_world.sh - adds read write execute to file
 
 SCRIPTING  
 ----------------------------------------------------------------------------------------------------  
@@ -140,7 +146,14 @@ sudo mkfs.vfat /dev/[device_name] - format usb to fat32
 sudo mkfs.ntfs /dev/[device_name] - formar usb to NTFS
 sudo mkfs.exfat /dev/[device_name] - for usb for exFAT
 
-df or df -t shows available and used disk space 
+VOLUME RESIZING & INFO
+
+df or df -t -h -i shows available and used disk space
+pvs, lvs - list physical volumes
+
+pvresize  /dev/sdd3 - resizes the root volume and frees up hidden space
+lvextend -l +100%FREE /dev/mapper/fedora-root - extends fedora root with 100% of free drive space
+xfs_growfs / -resize file system on top of LVM
 ----------------------------------------------------------------------------------------------------
 
 NETWORK
