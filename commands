@@ -55,9 +55,10 @@ mkdir - makes a file in current folder
 dir - list all files in current directory
 ls -l - gives ownership and permissions info
 ls -lahD - gives info on rwx priviliges, date of file creation, number of files in in folder ...
-rmdir -rf - remove a folder and all files within
+rmdir - remove a n empty folder
 ~/ - shortcut to denote home directory
-rm -rf / - remove recursive force on home directory will delete you home directory and everything else 
+rm -rf / - remove recursive force on home directory will delete you home directory and everything else
+rm -r - deletes a folder and all its contents 
 chmod u+x hello_world.sh - change permissions to execute file with ./
 64 chmod +rwx hello_world.sh - adds read write execute to file
 
@@ -112,7 +113,7 @@ easy effects -q - to quit
 man amixer - amixer manual
 amixer | less - mixer volumes and capabilities
 amixer info - gives simple audio overview
-
+flatpak run me.timschneeberger.jdsp4linux i - james dsp audio
 wpctl inspect 43 - for pipewire
 amixer controls - shows all amixer controls
 aplay -l - lists all avilable audio playback devices
