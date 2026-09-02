@@ -129,6 +129,9 @@ systemctl reboot
 sudo killall shutdown - cancel shutdown timer   
 btop, top, htop - system monitors
 lspci, glxinfo, lshw - chipset info
+
+pkill -9 -f tryx-panorama && dbus-run-session -- /home/snow/Tryx-Linux-GUI/build/runtime/tryx-panorama-runtime - start a dbus run session for tryx-panorama
+/home/snow/Tryx-Linux-GUI/build/quick/tryx-panorama-manager - run try panorama manager
 ----------------------------------------------------------------------------------------------------
 
 MEDIA DEVICES
