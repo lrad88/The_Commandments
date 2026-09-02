@@ -120,4 +120,4 @@ sudo dnf group install python science
 
 sudo dnf -y group install workstation-product-environment
 
-sudo dnf install easy effects
+
