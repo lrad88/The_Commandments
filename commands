@@ -102,6 +102,7 @@ brightnessctl --device='kbd_backlight' set 3 - sets kbd backlight
 picom &, picom -b - enables default compositing, autostart as bg process  
 picom -C, picom -G - disables shoadow effects 
 picom -c -enable shadow effects
+picom --backend (egl, glx, xrender, dummy) - chnage the renderinf medium of picom
 
 pavucontrol - better gui audio control easy to use
 amixer set 'Master' 10% - puts volume to 10%                    
